@@ -1,0 +1,123 @@
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
+  width: 100vw; /* Asegura que ocupe todo el ancho de la pantalla */
+  background: linear-gradient(135deg, #1f1f1f, #121212); /* Fondo del login */
+  margin: 0; /* Elimina cualquier margen */
+  padding: 0; /* Elimina cualquier padding */
+}
+  .login-container {
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .login-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  
+    .logo {
+      width: 80px;
+      height: auto;
+      margin-bottom: 1rem;
+    }
+  
+    h1 {
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin: 0;
+    }
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+  
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.2rem;
+  
+      label {
+        font-size: 0.9rem;
+        color: #cccccc;
+        margin-bottom: 0.5rem;
+      }
+  
+      input {
+        padding: 0.8rem;
+        border: 1px solid #333;
+        border-radius: 6px;
+        background-color: #2a2a2a;
+        color: #fff;
+        font-size: 1rem;
+        transition: border 0.3s ease;
+  
+        &:focus {
+          border-color: #00bcd4;
+          outline: none;
+        }
+      }
+    }
+  
+    .error-message {
+      color: #ff6b6b;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+  
+    .btn-login {
+      padding: 0.8rem;
+      background-color: #00bcd4;
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 1rem;
+  
+      &:hover {
+        background-color: #03a9f4;
+      }
+  
+      &:disabled {
+        background-color: #555;
+        cursor: not-allowed;
+      }
+    }
+  
+    .link-recover {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #bbbbbb;
+      text-decoration: none;
+  
+      &:hover {
+        color: #ffffff;
+      }
+    }
+  }
+  
+  /* Responsividad */
+  @media (max-width: 480px) {
+    .login-container {
+      padding: 1.5rem;
+    }
+    
+    .login-header h1 {
+      font-size: 1.3rem;
+    }
+    
+    .btn-login {
+      font-size: 0.9rem;
+    }
+  }
+  

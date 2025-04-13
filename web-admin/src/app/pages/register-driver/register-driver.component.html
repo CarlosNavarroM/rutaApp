@@ -1,0 +1,45 @@
+<div class="register-driver-wrapper">
+    <div class="register-driver-container">
+      <h1>Registrar Conductor</h1>
+      <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="register-driver-form">
+        <div class="input-group">
+          <label for="name">Nombre</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            [(ngModel)]="name"
+            required
+            placeholder="Nombre completo"
+          />
+        </div>
+        <div class="input-group">
+          <label for="email">Correo Electrónico</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            placeholder="ejemplo@dominio.com"
+          />
+        </div>
+        <div class="input-group">
+          <label for="rut">RUT</label>
+          <input
+            id="rut"
+            type="text"
+            name="rut"
+            [(ngModel)]="rut"
+            required
+            placeholder="12345678-9"
+          />
+        </div>
+        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <button type="submit" [disabled]="!registerForm.valid" class="btn-register">
+          Registrar
+        </button>
+      </form>
+    </div>
+  </div>
