@@ -1,0 +1,110 @@
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #00bcd4, #03a9f4); /* Fondo con degradado */
+    padding: var(--spacing-md);
+  }
+  
+  .login-container {
+    background-color: #ffffff;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .login-header {
+    margin-bottom: var(--spacing-md);
+  
+    .logo {
+      width: 80px;
+      height: auto;
+      margin-bottom: var(--spacing-sm);
+    }
+  
+    h1 {
+      font-size: 1.8rem;
+      color: #333333;
+      margin-bottom: var(--spacing-sm);
+    }
+  
+    p {
+      font-size: var(--font-size-sm);
+      color: #666666;
+    }
+  }
+  
+  .input-group {
+    margin-bottom: var(--spacing-md);
+  
+    label {
+      font-size: var(--font-size-sm);
+      color: #333333;
+      margin-bottom: var(--spacing-sm);
+      display: block;
+      text-align: left;
+    }
+  
+    input {
+      width: 100%;
+      padding: var(--spacing-sm);
+      border: 1px solid #cccccc;
+      border-radius: var(--border-radius);
+      background-color: #f9f9f9;
+      color: #333333;
+      font-size: var(--font-size-base);
+    }
+  
+    input:focus {
+      border-color: #00bcd4;
+      outline: none;
+    }
+  }
+  
+  button {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background-color: #00bcd4;
+    border: none;
+    border-radius: var(--border-radius);
+    color: #ffffff;
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #03a9f4;
+  }
+  
+  button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    color: var(--error-color);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+  }
+  
+  /* Responsividad */
+  @media (max-width: 768px) {
+    .login-container {
+      padding: var(--spacing-md);
+    }
+  
+    h1 {
+      font-size: 1.5rem;
+    }
+  
+    button {
+      font-size: var(--font-size-sm);
+    }
+  }
