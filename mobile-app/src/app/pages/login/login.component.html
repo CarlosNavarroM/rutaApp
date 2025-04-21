@@ -29,9 +29,8 @@
         />
       </div>
       <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <button type="submit" [disabled]="!loginForm.valid || loading">
-        {{ loading ? 'Ingresando...' : 'Ingresar' }}
-      </button>
+      <button type="submit" [disabled]="!loginForm.valid || loading">{{ loading ? 'Ingresando...' : 'Ingresar' }}</button>
+      <button routerLink="/recuperar" class="btn-recover">¿Olvidaste tu contraseña?</button>
     </form>
   </div>
 </div>
