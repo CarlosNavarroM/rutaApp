@@ -1,45 +1,67 @@
 <div class="register-driver-wrapper">
-    <div class="register-driver-container">
-      <h1>Registrar Conductor</h1>
-      <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="register-driver-form">
-        <div class="input-group">
-          <label for="name">Nombre</label>
-          <input
-            id="name"
-            type="text"
-            name="name"
-            [(ngModel)]="name"
-            required
-            placeholder="Nombre completo"
-          />
-        </div>
-        <div class="input-group">
-          <label for="email">Correo Electrónico</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            [(ngModel)]="email"
-            required
-            placeholder="ejemplo@dominio.com"
-          />
-        </div>
-        <div class="input-group">
-          <label for="rut">RUT</label>
-          <input
-            id="rut"
-            type="text"
-            name="rut"
-            [(ngModel)]="rut"
-            required
-            placeholder="12345678-9"
-          />
-        </div>
-        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-        <button type="submit" [disabled]="!registerForm.valid" class="btn-register">
-          Registrar
-        </button>
-      </form>
-    </div>
+  <div class="register-driver-container">
+    <h1>Registrar Conductor</h1>
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="register-driver-form">
+      <div class="input-group">
+        <label for="nombre">Nombre</label>
+        <input
+          id="nombre"
+          type="text"
+          name="nombre"
+          [(ngModel)]="conductor.nombre"
+          required
+          placeholder="Nombre completo"
+        />
+      </div>
+      <div class="input-group">
+        <label for="correo">Correo Electrónico</label>
+        <input
+          id="correo"
+          type="email"
+          name="correo"
+          [(ngModel)]="conductor.correo"
+          required
+          placeholder="ejemplo@dominio.com"
+        />
+      </div>
+      <div class="input-group">
+        <label for="rut">RUT</label>
+        <input
+          id="rut"
+          type="text"
+          name="rut"
+          [(ngModel)]="conductor.rut"
+          required
+          placeholder="12345678-9"
+        />
+      </div>
+      
+      <div class="input-group">
+        <label for="telefono">Teléfono</label>
+        <input
+          id="telefono"
+          type="text"
+          name="telefono"
+          [(ngModel)]="conductor.telefono"
+          placeholder=""
+        />
+      </div>
+      <div class="input-group">
+        <label for="licencia">Licencia</label>
+        <input
+          id="licencia"
+          type="text"
+          name="licencia"
+          [(ngModel)]="conductor.licencia"
+          required
+          placeholder="A2 A4"
+        />
+      </div>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <button type="submit" [disabled]="loading" class="btn-register">
+        {{ loading ? 'Registrando...' : 'Registrar' }}
+      </button>
+    </form>
   </div>
+</div>
