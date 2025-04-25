@@ -1,37 +1,48 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from '../../../../firebase/firebase-config'; // Ruta corregida
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private isAuthenticated = false; // Simulación de autenticación
+  constructor() {}
 
-  constructor(private readonly router: Router) {}
-
-  // Simulación de inicio de sesión
-  login(email: string, password: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (email === 'test@example.com' && password === 'password') {
-        this.isAuthenticated = true;
-        resolve({ message: 'Login successful' });
-      } else {
-        reject(new Error('Invalid credentials'));
-      }
-    });
+  async login(email: string, password: string): Promise<void> {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Login exitoso');
+      console.log('Correo:', userCredential.user.email);
+      console.log('ID:', userCredential.user.uid);
+    } catch (error) {
+      console.error('Error en el login:', error);
+      throw error;
+    }
   }
 
-  // Simulación de cierre de sesión
-  logout(): Promise<void> {
-    return new Promise((resolve) => {
-      this.isAuthenticated = false;
-      this.router.navigate(['/login']);
-      resolve();
-    });
+  async register(email: string, password: string): Promise<void> {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('Registro exitoso');
+      console.log('Correo:', userCredential.user.email);
+      console.log('ID:', userCredential.user.uid);
+    } catch (error) {
+      console.error('Error en el registro:', error);
+      throw error;
+    }
   }
 
-  // Método para verificar si el usuario está autenticado
-  isLoggedIn(): boolean {
-    return this.isAuthenticated;
+  async logout(): Promise<void> {
+    try {
+      await signOut(auth);
+      console.log('Logout exitoso');
+    } catch (error) {
+      console.error('Error en el logout:', error);
+      throw error;
+    }
   }
 }
