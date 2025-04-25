@@ -1,0 +1,26 @@
+<div class="fullscreen">
+    <div class="form-container">
+      <h1>Registrar Administrador</h1>
+      <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="form">
+        <div class="input-group">
+          <label for="correo">Correo Electrónico</label>
+          <input
+            id="correo"
+            type="email"
+            name="correo"
+            [(ngModel)]="admin.correo"
+            required
+            placeholder="ejemplo@dominio.com"
+          />
+        </div>
+  
+        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  
+        <button type="submit" [disabled]="loading">
+          {{ loading ? 'Registrando...' : 'Registrar' }}
+        </button>
+      </form>
+    </div>
+  </div>
+  
