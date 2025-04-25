@@ -3,7 +3,7 @@ import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail, signOu
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { firebaseConfig } from '../../../../firebase/firebase-config';
-import { Conductor } from '../models/models';
+import { Conductor, Usuario } from '../models/models';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -33,7 +33,7 @@ export class AuthService {
       const userCredential = await createUserWithEmailAndPassword(auth, conductor.correo, 'Temporal123!');
       const userId = userCredential.user.uid;
   
-      // Guardar los datos en la colección "usuarios"
+      // Guardar los datos en la colección "USUARIO"
       await setDoc(doc(db, 'USUARIO', userId), {
         id: userId,
         correo: conductor.correo,
@@ -63,6 +63,29 @@ export class AuthService {
       console.log('Logout exitoso');
     } catch (error) {
       console.error('Error en el logout:', error);
+      throw error;
+    }
+  }
+
+
+  async registerAdmin(admin: Usuario): Promise<void> {
+    try {
+      // Crear usuario en Firebase Authentication con una contraseña temporal
+      const userCredential = await createUserWithEmailAndPassword(auth, admin.correo, 'Temporal123!');
+      const userId = userCredential.user.uid;
+  
+      // Guardar los datos en la colección "USUARIO"
+      await setDoc(doc(db, 'USUARIO', userId), {
+        id: userId,
+        correo: admin.correo,
+        perfil: admin.perfil // Siempre será "Administrador" en este caso
+      });
+  
+      // Enviar correo de restablecimiento de contraseña
+      await sendPasswordResetEmail(auth, admin.correo);
+      console.log('Administrador registrado y correo de restablecimiento enviado.');
+    } catch (error) {
+      console.error('Error al registrar al administrador:', error);
       throw error;
     }
   }
