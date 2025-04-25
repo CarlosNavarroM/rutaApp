@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../firebase-config'; // Asegúrate de importar tu configuración de Firebase
+import { firebaseConfig } from '../../../../firebase/firebase-config'; // Ruta corregida
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
