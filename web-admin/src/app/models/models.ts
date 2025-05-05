@@ -4,8 +4,6 @@ export interface Usuario {
     correo: string; // Correo electrónico
     perfil: 'Administrador' | 'Conductor'; // Rol del usuario
    
-    
-    
   }
 
   // Interfaz para Conductor (extiende Usuario)
@@ -15,3 +13,5 @@ export interface Usuario {
     telefono?: string; // Teléfono (opcional)
     licencia: string; // Licencias del conductor (ejemplo: "A2 A4")
   }
+
+  

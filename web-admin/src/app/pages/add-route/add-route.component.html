@@ -1,0 +1,99 @@
+<div class="form-container">
+    <h3>Agregar Registro</h3>
+    <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm">
+      <div
+        *ngFor="
+          let campo of [
+            'conductor',
+            'transporte',
+            'tipo_carga',
+            'turno',
+            'vuelta',
+            'local',
+            'gestion',
+            'estado'
+          ]
+        "
+      >
+        <label [for]="campo">{{ campo | titlecase }}:</label>
+        <input
+          type="text"
+          [id]="campo"
+          [(ngModel)]="nuevoRegistro[campo]"
+          [name]="campo"
+          required
+        />
+      </div>
+      <div>
+        <label for="fecha">Fecha y Hora:</label>
+        <input
+          type="datetime-local"
+          id="fecha"
+          [(ngModel)]="nuevoRegistro.fecha"
+          name="fecha"
+          required
+        />
+      </div>
+      <button type="submit" [disabled]="!registroForm.form.valid">
+        Agregar Registro
+      </button>
+    </form>
+  </div>
+  
+  <div *ngIf="cargando">Cargando datos...</div>
+  
+  <div *ngIf="!cargando && (registros$ | async)?.length === 0">
+    No hay registros disponibles.
+  </div>
+  
+  <div
+    *ngIf="!cargando && (registros$ | async)?.length > 0"
+    class="table-container"
+  >
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Conductor</th>
+          <th>Transporte</th>
+          <th>Tipo Carga</th>
+          <th>Turno</th>
+          <th>Vuelta</th>
+          <th>Local</th>
+          <th>Gestión</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of (registros$ | async)?.slice(-10)">
+          <td>{{ item.conductor }}</td>
+          <td>{{ item.transporte }}</td>
+          <td>{{ item.tipo_carga }}</td>
+          <td>{{ item.turno }}</td>
+          <td>{{ item.vuelta }}</td>
+          <td>{{ item.local }}</td>
+          <td>{{ item.gestion }}</td>
+          <td>{{ item.estado }}</td>
+          <td>
+            {{
+              item.fecha?.toDate
+                ? (item.fecha.toDate() | date : 'dd/MM/yyyy')
+                : (item.fecha | date : 'dd/MM/yyyy')
+            }}
+          </td>
+          <td>
+            {{
+              item.fecha?.toDate
+                ? (item.fecha.toDate() | date : 'HH:mm')
+                : (item.fecha | date : 'HH:mm')
+            }}
+          </td>
+          <td>
+            <button (click)="confirmarEliminar(item.id)">❌</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
