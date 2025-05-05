@@ -1,55 +1,49 @@
 <div class="form-container">
-    <h3>Agregar Registro</h3>
-    <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm">
-      <div
-        *ngFor="
-          let campo of [
-            'conductor',
-            'transporte',
-            'tipo_carga',
-            'turno',
-            'vuelta',
-            'local',
-            'gestion',
-            'estado'
-          ]
-        "
-      >
-        <label [for]="campo">{{ campo | titlecase }}:</label>
-        <input
-          type="text"
-          [id]="campo"
-          [(ngModel)]="nuevoRegistro[campo]"
-          [name]="campo"
-          required
-        />
-      </div>
-      <div>
-        <label for="fecha">Fecha y Hora:</label>
-        <input
-          type="datetime-local"
-          id="fecha"
-          [(ngModel)]="nuevoRegistro.fecha"
-          name="fecha"
-          required
-        />
-      </div>
-      <button type="submit" [disabled]="!registroForm.form.valid">
-        Agregar Registro
-      </button>
-    </form>
-  </div>
-  
-  <div *ngIf="cargando">Cargando datos...</div>
-  
-  <div *ngIf="!cargando && (registros$ | async)?.length === 0">
-    No hay registros disponibles.
-  </div>
-  
-  <div
-    *ngIf="!cargando && (registros$ | async)?.length > 0"
-    class="table-container"
-  >
+  <h3>Agregar Registro</h3>
+  <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm">
+    <div
+      *ngFor="
+        let campo of [
+          'conductor',
+          'transporte',
+          'tipo_carga',
+          'turno',
+          'vuelta',
+          'local',
+          'gestion',
+          'estado'
+        ]
+      "
+    >
+      <label [for]="campo">{{ campo | titlecase }}:</label>
+      <input
+        type="text"
+        [id]="campo"
+        [(ngModel)]="nuevoRegistro[campo]"
+        [name]="campo"
+        required
+      />
+    </div>
+    <div>
+      <label for="fecha">Fecha y Hora:</label>
+      <input
+        type="datetime-local"
+        id="fecha"
+        [(ngModel)]="nuevoRegistro.fecha"
+        name="fecha"
+        required
+      />
+    </div>
+    <button type="submit" [disabled]="!registroForm.form.valid">
+      Agregar Registro
+    </button>
+  </form>
+</div>
+
+<div *ngIf="cargando" class="loading">Cargando datos...</div>
+
+<div *ngIf="!cargando && (registros$ | async) as registros">
+  <div *ngIf="registros.length > 0" class="table-container">
     <table class="styled-table">
       <thead>
         <tr>
@@ -67,7 +61,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of (registros$ | async)?.slice(-10)">
+        <tr *ngFor="let item of registros?.slice(-10)">
           <td>{{ item.conductor }}</td>
           <td>{{ item.transporte }}</td>
           <td>{{ item.tipo_carga }}</td>
@@ -97,3 +91,7 @@
       </tbody>
     </table>
   </div>
+  <div *ngIf="registros.length === 0" class="no-data">
+    No hay registros disponibles.
+  </div>
+</div>

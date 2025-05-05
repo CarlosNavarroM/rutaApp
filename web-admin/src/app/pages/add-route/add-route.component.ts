@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseDatabaseService } from '../../services/firebase-database.service';
-import { Observable, BehaviorSubject, switchMap } from 'rxjs'; // Importa BehaviorSubject y switchMap
+import { Observable, BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-add-route',
@@ -11,7 +11,7 @@ import { Observable, BehaviorSubject, switchMap } from 'rxjs'; // Importa Behavi
   templateUrl: './add-route.component.html',
   styleUrls: ['./add-route.component.scss']
 })
-export class AddRouteComponent implements OnInit {
+export class AddRouteComponent implements OnInit { // <--- Asegúrate de que la CLASE tenga la palabra 'export' aquí
   private refreshData$ = new BehaviorSubject<void>(undefined);
   registros$: Observable<any[]> = this.refreshData$.pipe(
     switchMap(() => this.dbService.readCollectionData('REGISTRO_DESPACHO'))
@@ -72,6 +72,7 @@ export class AddRouteComponent implements OnInit {
         console.error('Error al agregar el registro:', error);
       }
     });
+
   }
 
   confirmarEliminar(id: string) {
