@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseDatabaseService } from '../../services/firebase-database.service';
 import { Observable, BehaviorSubject, switchMap, forkJoin, of, map } from 'rxjs';
+import { Usuario, Conductor, Transporte, TipoCarga, Turno, Vuelta, Local, Gestion, Estado } from '../../models/models';
 
 @Component({
   selector: 'app-add-route',
