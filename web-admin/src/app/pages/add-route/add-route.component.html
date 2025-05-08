@@ -1,6 +1,5 @@
 <div class="form-container">
   <h3>Agregar Registro</h3>
-
   <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm">
     <div>
       <label for="fecha">Fecha y Hora:</label>
@@ -77,58 +76,87 @@
   </form>
 </div>
 
+<div class="filter-container">
+  <h3>Filtrar Registros</h3>
+  <div class="filter-controls">
+     <div *ngIf="conductores$ | async as conductores">
+      <label for="filterConductor">Conductor:</label>
+      <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor" (change)="applyFilters()">
+        <option value="">Todos los Conductores</option>
+        <option *ngFor="let conductor of conductores" [value]="conductor.nombre">{{ conductor.nombre }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="filterFecha">Fecha:</label>
+      <input type="date" id="filterFecha" [(ngModel)]="filterCriteria.fecha" name="filterFecha" (change)="applyFilters()">
+    </div>
+
+     <div *ngIf="turnos$ | async as turnos">
+      <label for="filterTurno">Turno:</label>
+      <select id="filterTurno" [(ngModel)]="filterCriteria.turno" name="filterTurno" (change)="applyFilters()">
+        <option value="">Todos los Turnos</option>
+        <option *ngFor="let turno of turnos" [value]="turno.nombre">{{ turno.nombre }}</option>
+      </select>
+    </div>
+
+    <button (click)="resetFilters()">Limpiar Filtros</button>
+  </div>
+</div>
 <h3>Últimos Registros</h3>
 
 <div *ngIf="cargando" class="loading">Cargando datos...</div>
 
 <div *ngIf="!cargando && (registros$ | async) as registros">
   <div *ngIf="registros.length > 0" class="table-container">
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Hora</th>
-          <th>Turno</th>
-          <th>Vuelta</th>
-          <th>Gestión</th>
-          <th>Local</th>
-          <th>Conductor</th>
-          <th>Transporte</th>
-          <th>Tipo Carga</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of registros?.slice(-10)">
-          <td>
-            {{
-            item.fecha?.toDate
-            ? (item.fecha.toDate() | date : 'dd/MM/yyyy')
-            : (item.fecha | date : 'dd/MM/yyyy')
-            }}
-          </td>
-          <td>
-            {{
-            item.fecha?.toDate
-            ? (item.fecha.toDate() | date : 'HH:mm')
-            : (item.fecha | date : 'HH:mm')
-            }}
-          </td>
-          <td>{{ item.turno }}</td>
-          <td>{{ item.vuelta }}</td>
-          <td>{{ item.gestion }}</td>
-          <td>{{ item.local }}</td>
-          <td>{{ item.conductor }}</td>
-          <td>{{ item.transporte }}</td>
-          <td>{{ item.tipo_carga }}</td>
-          <td>{{ item.estado }}</td>
-          <td>
-            <button (click)="confirmarEliminar(item.id)">❌</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="scrollable-table-wrapper">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Turno</th>
+            <th>Vuelta</th>
+            <th>Gestión</th>
+            <th>Local</th>
+            <th>Conductor</th>
+            <th>Transporte</th>
+            <th>Tipo Carga</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of registros">
+            <td>
+              {{
+              item.fecha?.toDate
+              ? (item.fecha.toDate() | date : 'dd/MM/yyyy')
+              : (item.fecha | date : 'dd/MM/yyyy')
+              }}
+            </td>
+            <td>
+              {{
+              item.fecha?.toDate
+              ? (item.fecha.toDate() | date : 'HH:mm')
+              : (item.fecha | date : 'HH:mm')
+              }}
+            </td>
+            <td>{{ item.turno }}</td>
+            <td>{{ item.vuelta }}</td>
+            <td>{{ item.gestion }}</td>
+            <td>{{ item.local }}</td>
+            <td>{{ item.conductor }}</td>
+            <td>{{ item.transporte }}</td>
+            <td>{{ item.tipo_carga }}</td>
+            <td>{{ item.estado }}</td>
+            <td>
+              <button (click)="confirmarEliminar(item.id)">❌</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div *ngIf="registros.length === 0" class="no-data">
     No hay registros disponibles.
