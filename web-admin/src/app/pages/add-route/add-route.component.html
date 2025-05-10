@@ -1,11 +1,15 @@
+<!-- Formulario para agregar un nuevo registro -->
 <div class="form-container">
   <h3>Agregar Registro</h3>
   <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm">
+    
+    <!-- Campo de fecha y hora -->
     <div>
       <label for="fecha">Fecha y Hora:</label>
       <input type="datetime-local" id="fecha" [(ngModel)]="nuevoRegistro.fecha" name="fecha" required />
     </div>
 
+    <!-- Selector de turno -->
     <div *ngIf="turnos$ | async as turnos">
       <label for="turno">Turno:</label>
       <select id="turno" [(ngModel)]="nuevoRegistro.turno" name="turno" required>
@@ -14,6 +18,7 @@
       </select>
     </div>
 
+    <!-- Selector de vuelta -->
     <div *ngIf="vueltas$ | async as vueltas">
       <label for="vuelta">Vuelta:</label>
       <select id="vuelta" [(ngModel)]="nuevoRegistro.vuelta" name="vuelta" required>
@@ -22,6 +27,7 @@
       </select>
     </div>
 
+    <!-- Selector de gestión -->
     <div *ngIf="gestiones$ | async as gestiones">
       <label for="gestion">Gestión:</label>
       <select id="gestion" [(ngModel)]="nuevoRegistro.gestion" name="gestion" required>
@@ -30,6 +36,7 @@
       </select>
     </div>
 
+    <!-- Selector de local -->
     <div *ngIf="locales$ | async as locales">
       <label for="local">Local:</label>
       <select id="local" [(ngModel)]="nuevoRegistro.local" name="local" required>
@@ -38,6 +45,7 @@
       </select>
     </div>
 
+    <!-- Selector de conductor -->
     <div *ngIf="conductores$ | async as conductores">
       <label for="conductor">Conductor:</label>
       <select id="conductor" [(ngModel)]="nuevoRegistro.conductor" name="conductor" required>
@@ -46,6 +54,7 @@
       </select>
     </div>
 
+    <!-- Selector de transporte -->
     <div *ngIf="transportes$ | async as transportes">
       <label for="transporte">Transporte:</label>
       <select id="transporte" [(ngModel)]="nuevoRegistro.transporte" name="transporte" required>
@@ -54,6 +63,7 @@
       </select>
     </div>
 
+    <!-- Selector de tipo de carga -->
     <div *ngIf="tiposCarga$ | async as tiposCarga">
       <label for="tipo_carga">Tipo Carga:</label>
       <select id="tipo_carga" [(ngModel)]="nuevoRegistro.tipo_carga" name="tipo_carga" required>
@@ -62,6 +72,7 @@
       </select>
     </div>
 
+    <!-- Selector de estado -->
     <div *ngIf="estados$ | async as estados">
       <label for="estado">Estado:</label>
       <select id="estado" [(ngModel)]="nuevoRegistro.estado" name="estado" required>
@@ -70,16 +81,20 @@
       </select>
     </div>
 
+    <!-- Botón para enviar el formulario -->
     <button type="submit" [disabled]="!registroForm.form.valid">
       Agregar Registro
     </button>
   </form>
 </div>
 
+<!-- Sección de filtros -->
 <div class="filter-container">
   <h3>Filtrar Registros</h3>
   <div class="filter-controls">
-     <div *ngIf="conductores$ | async as conductores">
+
+    <!-- Filtro por conductor -->
+    <div *ngIf="conductores$ | async as conductores">
       <label for="filterConductor">Conductor:</label>
       <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor" (change)="applyFilters()">
         <option value="">Todos los Conductores</option>
@@ -87,12 +102,14 @@
       </select>
     </div>
 
+    <!-- Filtro por fecha -->
     <div>
       <label for="filterFecha">Fecha:</label>
       <input type="date" id="filterFecha" [(ngModel)]="filterCriteria.fecha" name="filterFecha" (change)="applyFilters()">
     </div>
 
-     <div *ngIf="turnos$ | async as turnos">
+    <!-- Filtro por turno -->
+    <div *ngIf="turnos$ | async as turnos">
       <label for="filterTurno">Turno:</label>
       <select id="filterTurno" [(ngModel)]="filterCriteria.turno" name="filterTurno" (change)="applyFilters()">
         <option value="">Todos los Turnos</option>
@@ -100,13 +117,18 @@
       </select>
     </div>
 
+    <!-- Botón para limpiar filtros -->
     <button (click)="resetFilters()">Limpiar Filtros</button>
   </div>
 </div>
+
+<!-- Título de la tabla -->
 <h3>Últimos Registros</h3>
 
+<!-- Indicador de carga -->
 <div *ngIf="cargando" class="loading">Cargando datos...</div>
 
+<!-- Tabla de registros -->
 <div *ngIf="!cargando && (registros$ | async) as registros">
   <div *ngIf="registros.length > 0" class="table-container">
     <div class="scrollable-table-wrapper">
@@ -127,21 +149,10 @@
           </tr>
         </thead>
         <tbody>
+          <!-- Fila por cada registro -->
           <tr *ngFor="let item of registros">
-            <td>
-              {{
-              item.fecha?.toDate
-              ? (item.fecha.toDate() | date : 'dd/MM/yyyy')
-              : (item.fecha | date : 'dd/MM/yyyy')
-              }}
-            </td>
-            <td>
-              {{
-              item.fecha?.toDate
-              ? (item.fecha.toDate() | date : 'HH:mm')
-              : (item.fecha | date : 'HH:mm')
-              }}
-            </td>
+            <td>{{ item.fecha?.toDate ? (item.fecha.toDate() | date : 'dd/MM/yyyy') : (item.fecha | date : 'dd/MM/yyyy') }}</td>
+            <td>{{ item.fecha?.toDate ? (item.fecha.toDate() | date : 'HH:mm') : (item.fecha | date : 'HH:mm') }}</td>
             <td>{{ item.turno }}</td>
             <td>{{ item.vuelta }}</td>
             <td>{{ item.gestion }}</td>
@@ -151,6 +162,7 @@
             <td>{{ item.tipo_carga }}</td>
             <td>{{ item.estado }}</td>
             <td>
+              <!-- Botón para eliminar registro -->
               <button (click)="confirmarEliminar(item.id)">❌</button>
             </td>
           </tr>
@@ -158,6 +170,8 @@
       </table>
     </div>
   </div>
+
+  <!-- Mensaje si no hay registros -->
   <div *ngIf="registros.length === 0" class="no-data">
     No hay registros disponibles.
   </div>
