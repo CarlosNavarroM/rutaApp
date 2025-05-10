@@ -1,3 +1,4 @@
+
 <!-- Formulario para agregar un nuevo registro -->
 <div class="form-container">
   <h3>Agregar Registro</h3>
@@ -6,7 +7,7 @@
     <!-- Campo de fecha y hora -->
     <div>
       <label for="fecha">Fecha y Hora:</label>
-      <input type="datetime-local" id="fecha" [(ngModel)]="nuevoRegistro.fecha" name="fecha" required />
+      <input type="datetime-local" id="fecha" [(ngModel)]="nuevoRegistro.fecha" name="fecha" required autocomplete="off" aria-label="Fecha y hora del despacho" />
     </div>
 
     <!-- Selector de turno -->
@@ -14,7 +15,7 @@
       <label for="turno">Turno:</label>
       <select id="turno" [(ngModel)]="nuevoRegistro.turno" name="turno" required>
         <option value="" disabled>Seleccionar Turno</option>
-        <option *ngFor="let item of turnos" [value]="item.nombre">{{ item.nombre }}</option>
+        <option *ngFor="let item of turnos; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
       </select>
     </div>
 
@@ -23,7 +24,7 @@
       <label for="vuelta">Vuelta:</label>
       <select id="vuelta" [(ngModel)]="nuevoRegistro.vuelta" name="vuelta" required>
         <option value="" disabled>Seleccionar Vuelta</option>
-        <option *ngFor="let item of vueltas" [value]="item.nombre">{{ item.nombre }}</option>
+        <option *ngFor="let item of vueltas; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
       </select>
     </div>
 
@@ -32,7 +33,7 @@
       <label for="gestion">Gestión:</label>
       <select id="gestion" [(ngModel)]="nuevoRegistro.gestion" name="gestion" required>
         <option value="" disabled>Seleccionar Gestión</option>
-        <option *ngFor="let item of gestiones" [value]="item.nombre">{{ item.nombre }}</option>
+        <option *ngFor="let item of gestiones; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
       </select>
     </div>
 
@@ -41,7 +42,7 @@
       <label for="local">Local:</label>
       <select id="local" [(ngModel)]="nuevoRegistro.local" name="local" required>
         <option value="" disabled>Seleccionar Local</option>
-        <option *ngFor="let item of locales" [value]="item.local">{{ item.local }}</option>
+        <option *ngFor="let item of locales; trackBy: trackByNombre" [value]="item.local">{{ item.local }}</option>
       </select>
     </div>
 
@@ -50,7 +51,7 @@
       <label for="conductor">Conductor:</label>
       <select id="conductor" [(ngModel)]="nuevoRegistro.conductor" name="conductor" required>
         <option value="" disabled>Seleccionar Conductor</option>
-        <option *ngFor="let item of conductores" [value]="item.nombre">{{ item.nombre }}</option>
+        <option *ngFor="let item of conductores; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
       </select>
     </div>
 
@@ -59,7 +60,7 @@
       <label for="transporte">Transporte:</label>
       <select id="transporte" [(ngModel)]="nuevoRegistro.transporte" name="transporte" required>
         <option value="" disabled>Seleccionar Transporte</option>
-        <option *ngFor="let item of transportes" [value]="item.patente">{{ item.patente }}</option>
+        <option *ngFor="let item of transportes; trackBy: trackByNombre" [value]="item.patente">{{ item.patente }}</option>
       </select>
     </div>
 
@@ -68,7 +69,7 @@
       <label for="tipo_carga">Tipo Carga:</label>
       <select id="tipo_carga" [(ngModel)]="nuevoRegistro.tipo_carga" name="tipo_carga" required>
         <option value="" disabled>Seleccionar Tipo de Carga</option>
-        <option *ngFor="let item of tiposCarga" [value]="item.nombre">{{ item.nombre }}</option>
+        <option *ngFor="let item of tiposCarga; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
       </select>
     </div>
 
@@ -77,7 +78,7 @@
       <label for="estado">Estado:</label>
       <select id="estado" [(ngModel)]="nuevoRegistro.estado" name="estado" required>
         <option value="" disabled>Seleccionar Estado</option>
-        <option *ngFor="let item of estados" [value]="item.nombre">{{ item.nombre }}</option>
+        <option *ngFor="let item of estados; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
       </select>
     </div>
 
@@ -98,7 +99,7 @@
       <label for="filterConductor">Conductor:</label>
       <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor" (change)="applyFilters()">
         <option value="">Todos los Conductores</option>
-        <option *ngFor="let conductor of conductores" [value]="conductor.nombre">{{ conductor.nombre }}</option>
+        <option *ngFor="let conductor of conductores; trackBy: trackByNombre" [value]="conductor.nombre">{{ conductor.nombre }}</option>
       </select>
     </div>
 
@@ -113,12 +114,12 @@
       <label for="filterTurno">Turno:</label>
       <select id="filterTurno" [(ngModel)]="filterCriteria.turno" name="filterTurno" (change)="applyFilters()">
         <option value="">Todos los Turnos</option>
-        <option *ngFor="let turno of turnos" [value]="turno.nombre">{{ turno.nombre }}</option>
+        <option *ngFor="let turno of turnos; trackBy: trackByNombre" [value]="turno.nombre">{{ turno.nombre }}</option>
       </select>
     </div>
 
     <!-- Botón para limpiar filtros -->
-    <button (click)="resetFilters()">Limpiar Filtros</button>
+    <button type="button" (click)="resetFilters()">Limpiar Filtros</button>
   </div>
 </div>
 
@@ -132,25 +133,25 @@
 <div *ngIf="!cargando && (registros$ | async) as registros">
   <div *ngIf="registros.length > 0" class="table-container">
     <div class="scrollable-table-wrapper">
-      <table class="styled-table">
+      <table class="styled-table" role="table">
         <thead>
           <tr>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Turno</th>
-            <th>Vuelta</th>
-            <th>Gestión</th>
-            <th>Local</th>
-            <th>Conductor</th>
-            <th>Transporte</th>
-            <th>Tipo Carga</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Hora</th>
+            <th scope="col">Turno</th>
+            <th scope="col">Vuelta</th>
+            <th scope="col">Gestión</th>
+            <th scope="col">Local</th>
+            <th scope="col">Conductor</th>
+            <th scope="col">Transporte</th>
+            <th scope="col">Tipo Carga</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <!-- Fila por cada registro -->
-          <tr *ngFor="let item of registros">
+          <tr *ngFor="let item of registros; trackBy: trackById">
             <td>{{ item.fecha?.toDate ? (item.fecha.toDate() | date : 'dd/MM/yyyy') : (item.fecha | date : 'dd/MM/yyyy') }}</td>
             <td>{{ item.fecha?.toDate ? (item.fecha.toDate() | date : 'HH:mm') : (item.fecha | date : 'HH:mm') }}</td>
             <td>{{ item.turno }}</td>
@@ -163,7 +164,7 @@
             <td>{{ item.estado }}</td>
             <td>
               <!-- Botón para eliminar registro -->
-              <button (click)="confirmarEliminar(item.id)">❌</button>
+              <button type="button" (click)="confirmarEliminar(item.id)">❌</button>
             </td>
           </tr>
         </tbody>

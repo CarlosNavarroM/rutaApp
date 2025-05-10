@@ -16,6 +16,16 @@ import { Usuario, Conductor, Transporte, TipoCarga, Turno, Vuelta, Local, Gestio
 })
 export class AddRouteComponent implements OnInit, OnDestroy {
 
+
+trackByNombre(index: number, item: { nombre: string }): string {
+    return item.nombre;
+  }
+  
+  trackById(index: number, item: { id: string }): string {
+    return item.id;
+  }
+  
+
   // Control de destrucción de suscripciones
   private destroy$ = new Subject<void>();
 
@@ -239,5 +249,6 @@ export class AddRouteComponent implements OnInit, OnDestroy {
     this.cargando = true;
     this.refreshData$.next();
   }
+  
 }
 // Fin del componente
