@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, CollectionReference, DocumentData, QuerySnapshot, DocumentReference, DocumentSnapshot, query, QueryConstraint } from "firebase/firestore";
-
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, CollectionReference, DocumentData, QuerySnapshot,
+         DocumentReference, DocumentSnapshot, query, QueryConstraint } from "firebase/firestore";
 import { firebaseConfig } from '../../../../firebase/firebase-config';
 
 const app = initializeApp(firebaseConfig);
