@@ -1,37 +1,87 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Mis Despachos</ion-title>
+    <ion-segment
+      [(ngModel)]="selectedSegment"
+      (ionChange)="onSegmentChanged()"
+      color="primary"
+    >
+      <ion-segment-button value="pendientes">
+        <ion-icon name="watch-outline"></ion-icon>
+        <span>Pendientes</span>
+      </ion-segment-button>
+      <ion-segment-button value="completados">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+        <span>Completados</span>
+      </ion-segment-button>
+      <ion-segment-button value="rechazados">
+        <ion-icon name="close-circle-outline"></ion-icon>
+        <span>Rechazados</span>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-  <ion-text *ngIf="error" color="danger">{{ error }}</ion-text>
+<ion-content>
+  <ion-list *ngIf="loading">
+    <ion-item *ngFor="let i of [1,2,3]">
+      <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+    </ion-item>
+  </ion-list>
 
-  <ng-container *ngIf="!loading && !error">
-    <ion-card *ngFor="let d of despachos">
+  <div *ngIf="!loading && error" class="ion-text-center error-message">
+    {{ error }}
+  </div>
+
+  <ion-list *ngIf="!loading && !error">
+    <ion-card
+      *ngFor="let d of displayedDespachos"
+      [ngClass]="cardClass(d.estado)"
+    >
       <ion-card-header>
         <ion-card-title>{{ d.local }}</ion-card-title>
-        <ion-card-subtitle>
-          {{ d.tipo_carga }} – {{ d.fecha.toDate() | date: 'short' }}
-        </ion-card-subtitle>
+        <ion-badge [color]="badgeColor(d.estado)">
+          {{ d.estado }}
+        </ion-badge>
       </ion-card-header>
       <ion-card-content>
-        <p><strong>Gestión:</strong> {{ d.gestion }}</p>
-        <p><strong>Transporte:</strong> {{ d.transporte }}</p>
-        <p><strong>Turno:</strong> {{ d.turno }} | Vuelta: {{ d.vuelta }}</p>
+        <p class="small">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ d.fecha.toDate() | date:'short' }}
+        </p>
+        <p class="small">
+          <ion-icon name="cube-outline"></ion-icon>
+          {{ d.tipo_carga }}
+        </p>
+        <p class="small">
+          <ion-icon name="bag-handle-outline"></ion-icon>
+          {{ d.gestion }}
+        </p>
 
-        <ion-button expand="block" color="success" (click)="entregar(d.id)">
-          Entregar
+        <ion-button
+          fill="clear"
+          size="small"
+          (click)="showMapAlert(d.local)"
+        >
+          <ion-icon name="navigate-outline"></ion-icon>
+          Ver Ruta
         </ion-button>
-        <ion-button expand="block" color="danger" (click)="rechazar(d.id)">
-          Rechazar
-        </ion-button>
+
+        <ng-container *ngIf="selectedSegment === 'pendientes'">
+          <ion-button color="success" expand="full" (click)="entregar(d.id)">
+            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+            Entregar
+          </ion-button>
+          <ion-button color="danger" expand="full" (click)="rechazar(d.id)">
+            <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+            Rechazar
+          </ion-button>
+        </ng-container>
       </ion-card-content>
     </ion-card>
 
-    <div *ngIf="despachos?.length === 0" class="ion-text-center ion-padding">
-      No hay despachos asignados.
+    <div *ngIf="displayedDespachos.length === 0" class="ion-text-center">
+      No hay pedidos en esta sección.
     </div>
-  </ng-container>
+  </ion-list>
 </ion-content>
