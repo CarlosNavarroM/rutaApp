@@ -1,20 +1,37 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Mis Despachos</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+  <ion-text *ngIf="error" color="danger">{{ error }}</ion-text>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ng-container *ngIf="!loading && !error">
+    <ion-card *ngFor="let d of despachos">
+      <ion-card-header>
+        <ion-card-title>{{ d.local }}</ion-card-title>
+        <ion-card-subtitle>
+          {{ d.tipo_carga }} – {{ d.fecha.toDate() | date: 'short' }}
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Gestión:</strong> {{ d.gestion }}</p>
+        <p><strong>Transporte:</strong> {{ d.transporte }}</p>
+        <p><strong>Turno:</strong> {{ d.turno }} | Vuelta: {{ d.vuelta }}</p>
+
+        <ion-button expand="block" color="success" (click)="entregar(d.id)">
+          Entregar
+        </ion-button>
+        <ion-button expand="block" color="danger" (click)="rechazar(d.id)">
+          Rechazar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div *ngIf="despachos?.length === 0" class="ion-text-center ion-padding">
+      No hay despachos asignados.
+    </div>
+  </ng-container>
 </ion-content>

@@ -1,48 +1,35 @@
 import { Injectable } from '@angular/core';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getAuth, User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../../../../firebase/firebase-config'; // Ruta corregida
+import { firebaseConfig } from '../../../../firebase/firebase-config';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor() {}
-
   async login(email: string, password: string): Promise<void> {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Login exitoso');
-      console.log('Correo:', userCredential.user.email);
-      console.log('ID:', userCredential.user.uid);
-    } catch (error) {
-      console.error('Error en el login:', error);
-      throw error;
-    }
+    await signInWithEmailAndPassword(auth, email, password);
   }
 
   async register(email: string, password: string): Promise<void> {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log('Registro exitoso');
-      console.log('Correo:', userCredential.user.email);
-      console.log('ID:', userCredential.user.uid);
-    } catch (error) {
-      console.error('Error en el registro:', error);
-      throw error;
-    }
+    await createUserWithEmailAndPassword(auth, email, password);
   }
 
   async logout(): Promise<void> {
-    try {
-      await signOut(auth);
-      console.log('Logout exitoso');
-    } catch (error) {
-      console.error('Error en el logout:', error);
-      throw error;
-    }
+    await signOut(auth);
+  }
+
+  /** Espera hasta que Firebase emita el usuario actual */
+  async getCurrentUser(): Promise<User | null> {
+    console.log('AuthService.getCurrentUser() called');
+    return new Promise(resolve => {
+      console.log('AuthService.getCurrentUser: subscribing to auth state changes');
+      const unsubscribe = onAuthStateChanged(auth, user => {
+        console.log('AuthService.getCurrentUser: auth state changed, user:', user);
+        unsubscribe();
+        resolve(user);
+      });
+    });
   }
 }
