@@ -125,3 +125,9 @@ ion-button.action-btn ion-icon {
 .map-alert-close {
   --color: var(--text-muted);
 }
+:host ::ng-deep ion-alert.custom-alert-home .alert-input input {
+  color: #000 !important;
+}
+:host ::ng-deep ion-alert.custom-alert-home .alert-input input::placeholder {
+  color: #666 !important;
+}

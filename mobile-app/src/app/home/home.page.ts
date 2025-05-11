@@ -141,6 +141,7 @@ export class HomePage implements OnInit {
           handler: async () => {
             const reasonAlert = await this.alertCtrl.create({
               header: 'Motivo de rechazo',
+              cssClass: 'custom-alert-home',
               inputs: [{ name: 'razon', type: 'text', placeholder: 'Escribe el motivo...' }],
               buttons: [
                 { text: 'Cancelar', role: 'cancel' },
