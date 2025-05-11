@@ -17,5 +17,9 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'login', // Redirige rutas no encontradas al login
+  },  {
+    path: 'resumen',
+    loadComponent: () => import('./resumen/resumen.page').then( m => m.ResumenPage)
   },
+
 ];

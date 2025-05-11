@@ -1,3 +1,5 @@
+// src/app/home/home.page.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -12,7 +14,8 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { ConductorService } from '../services/conductor.service';
 import { DispatchService } from '../services/dispatch.service';
-import { Conductor, RegistroDespacho } from '../models/models';
+import { LocalService } from '../services/local.service';
+import { Conductor, RegistroDespacho, Local } from '../models/models';
 import { User as FirebaseUser } from 'firebase/auth';
 
 @Component({
@@ -34,6 +37,7 @@ export class HomePage implements OnInit {
     private readonly authService: AuthService,
     private readonly conductorService: ConductorService,
     private readonly dispatchService: DispatchService,
+    private readonly localService: LocalService,
     private readonly loadingCtrl: LoadingController,
     private readonly toastCtrl: ToastController,
     private readonly alertCtrl: AlertController
@@ -48,7 +52,7 @@ export class HomePage implements OnInit {
     this.loading = true;
     this.error = '';
     try {
-      const firebaseUser = await this.authService.getCurrentUser();
+      const firebaseUser: FirebaseUser | null = await this.authService.getCurrentUser();
       if (!firebaseUser) throw new Error('Usuario no autenticado');
 
       const profile = await firstValueFrom(
@@ -120,7 +124,7 @@ export class HomePage implements OnInit {
 
   public async confirmarRechazo(id?: string) {
     if (!id) return;
-    const confirm = await this.alertCtrl.create({
+    const alert = await this.alertCtrl.create({
       header: 'Confirmar rechazo',
       message: '¿Estás seguro de rechazar este despacho?',
       buttons: [
@@ -146,7 +150,7 @@ export class HomePage implements OnInit {
         }
       ]
     });
-    await confirm.present();
+    await alert.present();
   }
 
   private async rechazar(id: string, motivo: string): Promise<void> {
@@ -160,14 +164,49 @@ export class HomePage implements OnInit {
     }
   }
 
-  public async showMapAlert(address: string): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      header: 'Ruta',
-      message: address,
-      buttons: ['OK']
-    });
-    await alert.present();
-  }
+  /**
+   * Muestra un modal con TODOS los detalles del despacho
+   * y un botón para abrir Google Maps con el link real.
+   */
+ public async showMapAlert(despacho: RegistroDespacho): Promise<void> {
+  // 1. Traer datos del local
+  const locals: Local[] = await firstValueFrom(
+    this.localService.getByName(despacho.local)
+  );
+  const loc = locals[0];
+
+  // 2. Formatear fecha
+  const dateStr = despacho.fecha?.toDate
+    ? despacho.fecha.toDate().toLocaleString()
+    : String(despacho.fecha);
+
+  // 3. Crear y presentar el alert
+  const alert = await this.alertCtrl.create({
+    header: `📍  ${loc.local}`,
+    subHeader: `${loc.cadena} · ${loc.comuna}`,
+    message:
+      `• 📌 Dirección: ${loc.direccion}\n` +
+      `• 📦 Carga: ${despacho.tipo_carga}\n` +
+      `• 📅 Fecha: ${dateStr}\n` +
+      `• 🚚 Transporte: ${despacho.transporte}\n` +
+      `• ⏰ Turno/Vuelta: ${despacho.turno} / ${despacho.vuelta}`,
+    buttons: [
+      {
+        text: '🗺️  Abrir en Google Maps',
+        cssClass: 'map-alert-open',
+        handler: () => {
+          window.open(loc.link, '_blank');
+        }
+      },
+      {
+        text: '✖️  Cerrar',
+        role: 'cancel',
+        cssClass: 'map-alert-close'
+      }
+    ]
+  });
+  await alert.present();
+}
 
   private async showToast(
     message: string,

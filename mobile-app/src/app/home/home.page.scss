@@ -94,3 +94,11 @@ ion-button.action-btn ion-icon {
   gap: var(--spacing-sm);
   margin-top: var(--spacing-sm);
 }
+.map-alert-open {
+  --color: var(--primary-color);
+  font-weight: bold;
+}
+
+.map-alert-close {
+  --color: var(--text-muted);
+}
