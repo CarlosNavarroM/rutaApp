@@ -1,0 +1,16 @@
+/* src/app/resumen/resumen.page.scss */
+
+:host {
+  ion-segment {
+    margin: var(--spacing-md) 0;
+  }
+  h2 {
+    text-align: center;
+    color: var(--primary-color);
+  }
+  ion-item {
+    margin-bottom: var(--spacing-sm);
+    --background: #fafafa;
+    border-radius: var(--border-radius);
+  }
+}

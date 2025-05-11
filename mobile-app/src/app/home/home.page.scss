@@ -71,17 +71,40 @@ ion-button.action-btn {
   gap: 0.5rem;
 }
 
+/* src/app/home/home.page.scss */
+
+/* Botón Ver Ruta */
+ion-button.map-btn {
+  --background: var(--primary-color);
+  --color: #ffffff;
+  --border-radius: var(--border-radius);
+  margin-right: var(--spacing-sm);
+  height: 2.5rem;
+}
+
 /* Botón Entregar */
-ion-button.action-btn.deliver {
-  --border-color: #4caf50;
-  color: #2e7d32;
+ion-button.deliver {
+  --background: #4caf50;
+  --color: #ffffff;
+  --border-radius: var(--border-radius);
+  height: 2.5rem;
 }
 
 /* Botón Rechazar */
-ion-button.action-btn.reject {
-  --border-color: #f44336;
-  color: #c62828;
+ion-button.reject {
+  --background: #f44336;
+  --color: #ffffff;
+  --border-radius: var(--border-radius);
+  height: 2.5rem;
 }
+
+/* Asegura que los tres botones queden alineados y con la misma altura */
+.action-btn-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
 
 /* Iconos un poco más grandes */
 ion-button.action-btn ion-icon {

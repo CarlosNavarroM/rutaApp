@@ -15,13 +15,14 @@ import { AuthService } from '../services/auth.service';
 import { ConductorService } from '../services/conductor.service';
 import { DispatchService } from '../services/dispatch.service';
 import { LocalService } from '../services/local.service';
+import { ResumenPage } from '../resumen/resumen.page';
 import { Conductor, RegistroDespacho, Local } from '../models/models';
 import { User as FirebaseUser } from 'firebase/auth';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule],
+  imports: [CommonModule, IonicModule, FormsModule, ResumenPage],
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss']
 })
@@ -30,7 +31,7 @@ export class HomePage implements OnInit {
   public displayedDespachos: RegistroDespacho[] = [];
   public loading = false;
   public error = '';
-  public selectedSegment: 'pendientes' | 'completados' | 'rechazados' = 'pendientes';
+  public selectedSegment: 'pendientes' | 'completados' | 'rechazados' | 'resumen' = 'pendientes';
   private conductorNombre = '';
 
   constructor(
@@ -64,7 +65,6 @@ export class HomePage implements OnInit {
         this.dispatchService.getByConductorNombre(this.conductorNombre)
       );
       this.onSegmentChanged();
-
     } catch (err: any) {
       console.error(err);
       this.error = err.message ?? 'Error inesperado';
@@ -75,12 +75,19 @@ export class HomePage implements OnInit {
   }
 
   public onSegmentChanged(): void {
-    if (this.selectedSegment === 'pendientes') {
-      this.displayedDespachos = this.despachos.filter(d => d.estado === 'Pendiente');
-    } else if (this.selectedSegment === 'completados') {
-      this.displayedDespachos = this.despachos.filter(d => d.estado === 'Entregado');
-    } else {
-      this.displayedDespachos = this.despachos.filter(d => d.estado === 'Rechazado');
+    switch (this.selectedSegment) {
+      case 'pendientes':
+        this.displayedDespachos = this.despachos.filter(d => d.estado === 'Pendiente');
+        break;
+      case 'completados':
+        this.displayedDespachos = this.despachos.filter(d => d.estado === 'Entregado');
+        break;
+      case 'rechazados':
+        this.displayedDespachos = this.despachos.filter(d => d.estado === 'Rechazado');
+        break;
+      case 'resumen':
+        this.displayedDespachos = [];
+        break;
     }
   }
 
@@ -102,7 +109,7 @@ export class HomePage implements OnInit {
     if (!id) return;
     const alert = await this.alertCtrl.create({
       header: 'Confirmar entrega',
-      message: '¿Estás seguro de marcar como entregado este despacho?',
+      message: '¿Seguro quieres marcar como entregado este despacho?',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         { text: 'Entregar', handler: () => this.entregar(id) }
@@ -114,7 +121,7 @@ export class HomePage implements OnInit {
   private async entregar(id: string): Promise<void> {
     try {
       await this.dispatchService.marcarEntregado(id);
-      await this.showToast('✅ Entregado', 'success');
+      await this.showToast('Entregado ✔️', 'success');
       await this.loadDespachos();
     } catch (err: any) {
       console.error(err);
@@ -126,7 +133,7 @@ export class HomePage implements OnInit {
     if (!id) return;
     const alert = await this.alertCtrl.create({
       header: 'Confirmar rechazo',
-      message: '¿Estás seguro de rechazar este despacho?',
+      message: '¿Seguro quieres rechazar este despacho?',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -134,7 +141,7 @@ export class HomePage implements OnInit {
           handler: async () => {
             const reasonAlert = await this.alertCtrl.create({
               header: 'Motivo de rechazo',
-              inputs: [{ name: 'razon', type: 'text', placeholder: '¿Por qué?' }],
+              inputs: [{ name: 'razon', type: 'text', placeholder: 'Escribe el motivo...' }],
               buttons: [
                 { text: 'Cancelar', role: 'cancel' },
                 {
@@ -156,7 +163,7 @@ export class HomePage implements OnInit {
   private async rechazar(id: string, motivo: string): Promise<void> {
     try {
       await this.dispatchService.marcarRechazado(id, motivo);
-      await this.showToast('❌ Rechazado', 'warning');
+      await this.showToast('Rechazado ✖️', 'warning');
       await this.loadDespachos();
     } catch (err: any) {
       console.error(err);
@@ -164,11 +171,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  /**
-   * Muestra un modal con TODOS los detalles del despacho
-   * y un botón para abrir Google Maps con el link real.
-   */
- public async showMapAlert(despacho: RegistroDespacho): Promise<void> {
+  public async showMapAlert(despacho: RegistroDespacho): Promise<void> {
   // 1. Traer datos del local
   const locals: Local[] = await firstValueFrom(
     this.localService.getByName(despacho.local)
@@ -192,14 +195,14 @@ export class HomePage implements OnInit {
       `• ⏰ Turno/Vuelta: ${despacho.turno} / ${despacho.vuelta}`,
     buttons: [
       {
-        text: '🗺️  Abrir en Google Maps',
+        text: ' Abrir en Google Maps',
         cssClass: 'map-alert-open',
         handler: () => {
           window.open(loc.link, '_blank');
         }
       },
       {
-        text: '✖️  Cerrar',
+        text: 'Cerrar',
         role: 'cancel',
         cssClass: 'map-alert-close'
       }
