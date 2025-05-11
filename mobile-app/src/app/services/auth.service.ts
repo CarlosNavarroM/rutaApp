@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { getAuth, User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  getAuth,
+  User,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail
+} from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../../../firebase/firebase-config';
 
@@ -20,7 +28,7 @@ export class AuthService {
     await signOut(auth);
   }
 
-  /** Espera hasta que Firebase emita el usuario actual */
+  /** Recupera el usuario actual desde Firebase */
   async getCurrentUser(): Promise<User | null> {
     console.log('AuthService.getCurrentUser() called');
     return new Promise(resolve => {
@@ -31,5 +39,10 @@ export class AuthService {
         resolve(user);
       });
     });
+  }
+
+  /** Envía un correo para restablecer la contraseña */
+  async resetPassword(email: string): Promise<void> {
+    await sendPasswordResetEmail(auth, email);
   }
 }

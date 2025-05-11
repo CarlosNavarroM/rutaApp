@@ -14,12 +14,14 @@ export const routes: Routes = [
     redirectTo: 'login', // Cambia la redirección inicial al login
     pathMatch: 'full',
   },
+ 
   {
-    path: '**',
-    redirectTo: 'login', // Redirige rutas no encontradas al login
-  },  {
     path: 'resumen',
     loadComponent: () => import('./resumen/resumen.page').then( m => m.ResumenPage)
+  },
+  {
+    path: 'recuperar',
+    loadComponent: () => import('./pages/recuperar/recuperar.page').then( m => m.RecuperarPage)
   },
 
 ];

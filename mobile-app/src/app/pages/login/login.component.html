@@ -5,6 +5,7 @@
       <h1>Bienvenido, Conductor</h1>
       <p>Ingresa tus credenciales para continuar</p>
     </div>
+
     <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
       <div class="input-group">
         <label for="email">Correo Electrónico</label>
@@ -29,8 +30,14 @@
         />
       </div>
       <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <button type="submit" [disabled]="!loginForm.valid || loading">{{ loading ? 'Ingresando...' : 'Ingresar' }}</button>
-      <button routerLink="/recuperar" class="btn-recover">¿Olvidaste tu contraseña?</button>
+      <button type="submit" [disabled]="!loginForm.valid || loading">
+        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+      </button>
     </form>
+
+    <!-- Botón fuera del form y con type="button" -->
+    <button routerLink="/recuperar" class="btn-recover" type="button">
+      ¿Olvidaste tu contraseña?
+    </button>
   </div>
 </div>
