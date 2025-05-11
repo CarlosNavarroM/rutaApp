@@ -1,5 +1,3 @@
-// src/app/home/home.page.ts
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -50,7 +48,7 @@ export class HomePage implements OnInit {
     this.loading = true;
     this.error = '';
     try {
-      const firebaseUser: FirebaseUser | null = await this.authService.getCurrentUser();
+      const firebaseUser = await this.authService.getCurrentUser();
       if (!firebaseUser) throw new Error('Usuario no autenticado');
 
       const profile = await firstValueFrom(
@@ -96,8 +94,20 @@ export class HomePage implements OnInit {
     return 'warning';
   }
 
-  public async entregar(id?: string): Promise<void> {
+  public async confirmarEntrega(id?: string) {
     if (!id) return;
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar entrega',
+      message: '¿Estás seguro de marcar como entregado este despacho?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Entregar', handler: () => this.entregar(id) }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async entregar(id: string): Promise<void> {
     try {
       await this.dispatchService.marcarEntregado(id);
       await this.showToast('✅ Entregado', 'success');
@@ -108,23 +118,40 @@ export class HomePage implements OnInit {
     }
   }
 
-  public async rechazar(id?: string): Promise<void> {
+  public async confirmarRechazo(id?: string) {
     if (!id) return;
-
-    const alert = await this.alertCtrl.create({
-      header: 'Motivo de rechazo',
-      inputs: [{ name: 'razon', type: 'text', placeholder: '¿Por qué?' }],
+    const confirm = await this.alertCtrl.create({
+      header: 'Confirmar rechazo',
+      message: '¿Estás seguro de rechazar este despacho?',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { text: 'Rechazar', handler: data => data.razon }
+        {
+          text: 'Rechazar',
+          handler: async () => {
+            const reasonAlert = await this.alertCtrl.create({
+              header: 'Motivo de rechazo',
+              inputs: [{ name: 'razon', type: 'text', placeholder: '¿Por qué?' }],
+              buttons: [
+                { text: 'Cancelar', role: 'cancel' },
+                {
+                  text: 'Confirmar',
+                  handler: async data => {
+                    await this.rechazar(id, data.razon);
+                  }
+                }
+              ]
+            });
+            await reasonAlert.present();
+          }
+        }
       ]
     });
-    await alert.present();
-    const { data, role } = await alert.onDidDismiss();
-    if (role === 'cancel') return;
+    await confirm.present();
+  }
 
+  private async rechazar(id: string, motivo: string): Promise<void> {
     try {
-      await this.dispatchService.marcarRechazado(id, data.values.razon);
+      await this.dispatchService.marcarRechazado(id, motivo);
       await this.showToast('❌ Rechazado', 'warning');
       await this.loadDespachos();
     } catch (err: any) {

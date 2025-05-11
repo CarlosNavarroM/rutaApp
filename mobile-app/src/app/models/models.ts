@@ -106,7 +106,7 @@ export interface RegistroDespacho {
   id?: string;
   conductor: string;
   estado: 'Pendiente' | 'Entregado' | 'Rechazado';
-  fecha: any;          // Firestore Timestamp
+  fecha: any;
   gestion: string;
   local: string;
   tipo_carga: string;

@@ -62,3 +62,35 @@
     color: #d32f2f;
   }
 }
+/* Estilos comunes */
+ion-button.action-btn {
+  --border-width: 2px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Botón Entregar */
+ion-button.action-btn.deliver {
+  --border-color: #4caf50;
+  color: #2e7d32;
+}
+
+/* Botón Rechazar */
+ion-button.action-btn.reject {
+  --border-color: #f44336;
+  color: #c62828;
+}
+
+/* Iconos un poco más grandes */
+ion-button.action-btn ion-icon {
+  font-size: 1.2rem;
+}
+.action-btn-group {
+  display: flex;
+  padding-left: 3em;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
