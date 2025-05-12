@@ -6,13 +6,13 @@ export interface Usuario {
 
 }
 
-// Interfaz para Conductor (extiende Usuario)
-export interface Conductor extends Usuario {
-  nombre: string; // Nombre completo del usuario
-  rut: string; // RUT del usuario
-  telefono?: string; // Teléfono (opcional)
-  licencia: string; // Licencias del conductor (ejemplo: "A2 A4")
-}
+// // Interfaz para Conductor (extiende Usuario)
+// export interface Conductor extends Usuario {
+//   nombre: string; // Nombre completo del usuario
+//   rut: string; // RUT del usuario
+//   telefono?: string; // Teléfono (opcional)
+//   licencia: string; // Licencias del conductor (ejemplo: "A2 A4")
+// }
 
 // Interfaz para estado
 export interface Estado {
@@ -90,4 +90,30 @@ export interface Turno {
 export interface Vuelta {
   id?: string; // ID correlativo en Firebase Database
   nombre: string; // Nombre de la vuelta (ejemplo: "Primera", "Segunda")  
+}
+
+/** Conductor (document ID = UID) */
+export interface Conductor {
+  id?: string;         // UID del conductor
+  nombre: string;
+  rut: string;
+  licencia: string;
+  telefono?: string;
+}
+
+/** Despacho registrado */
+export interface RegistroDespacho {
+  id?: string;
+  conductor: string;
+  estado: 'Pendiente' | 'Entregado' | 'Rechazado';
+  fecha: any;
+  gestion: string;
+  local: string;
+  tipo_carga: string;
+  transporte: string;
+  turno: string;
+  vuelta: string;
+  motivoRechazo?: string;
+  fechaEntrega?: Date;
+  fechaRechazo?: Date;
 }

@@ -1,40 +1,47 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service'; // Importa el servicio de autenticación
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
-  errorMessage: string = '';
-  loading: boolean = false;
+  email = '';
+  password = '';
+  errorMessage = '';
+  loading = false;
 
-  constructor(private readonly router: Router, private authService: AuthService) {} // Inyecta el servicio de autenticación
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AuthService
+  ) {}
 
   async onLogin(): Promise<void> {
     if (!this.email || !this.password) {
       this.errorMessage = 'Por favor, ingresa correo y contraseña';
       return;
     }
-
     this.loading = true;
     this.errorMessage = '';
-
     try {
       await this.authService.login(this.email, this.password);
-      this.router.navigate(['/dashboard']); // Redirige al dashboard
-    } catch (error) {
+      window.location.href = '/home';
+    } catch {
       this.errorMessage = 'Credenciales inválidas';
     } finally {
       this.loading = false;
     }
   }
+
+  // ✅ Redirección a /recuperar con recarga total
+  goToRecuperar(): void {
+    window.location.href = '/recuperar';
+  }
+
 }

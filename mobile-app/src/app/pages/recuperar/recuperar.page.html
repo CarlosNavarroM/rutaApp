@@ -1,0 +1,32 @@
+<div class="login-wrapper">
+  <div class="login-container">
+    <div class="login-header">
+      <img src="assets/logo.png" alt="Logo" class="logo" />
+      <h1>Recuperar Contraseña</h1>
+      <p>Ingresa tu correo para recibir el enlace</p>
+    </div>
+
+    <form (ngSubmit)="onRecover()" #recoverForm="ngForm" class="login-form">
+      <div class="input-group">
+        <label for="email">Correo Electrónico</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          required
+          placeholder="ejemplo@dominio.com"
+          [(ngModel)]="email"
+        />
+      </div>
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <button type="submit" [disabled]="!recoverForm.valid || loading">
+        {{ loading ? 'Enviando...' : 'Enviar enlace' }}
+      </button>
+    </form>
+
+    <!-- Botón fuera del form -->
+    <button class="btn-recover" type="button" (click)="goToLogin()">
+  Volver al login
+</button>
+  </div>
+</div>

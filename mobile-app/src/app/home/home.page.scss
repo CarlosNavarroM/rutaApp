@@ -1,27 +1,152 @@
-#container {
-  text-align: center;
+:host {
+  ion-toolbar {
+    --background: #e0f7fa;     /* celeste suave */
+    color: #004d40;            /* texto oscuro */
+  }
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  ion-segment {
+    margin: var(--spacing-sm) var(--spacing-md);
+    --indicator-color: #004d40;
+    --color-checked: #004d40;
+    background: #b2ebf2;
+    border-radius: var(--border-radius);
+  }
+
+  ion-card {
+    margin: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    box-shadow: none;
+    background: #ffffff;
+  }
+
+  .pending-card {
+    border-left: 4px solid #00bcd4;
+  }
+
+  .completed-card {
+    border-left: 4px solid #4caf50;
+    background: #f1f8e9;
+  }
+
+  .error-card {
+    border-left: 4px solid #ff9800;
+    background: #fff3e0;
+  }
+
+  ion-badge {
+    margin-left: auto;
+    font-size: var(--font-size-sm);
+  }
+
+  ion-card-content .small {
+    font-size: var(--font-size-sm);
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  ion-button[fill="clear"] {
+    --color: #00796b;
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-sm);
+  }
+
+  ion-button[color="success"],
+  ion-button[color="danger"] {
+    margin-top: var(--spacing-sm);
+  }
+
+  .error-message {
+    padding: var(--spacing-md);
+    color: #d32f2f;
+  }
+}
+/* Estilos comunes */
+ion-button.action-btn {
+  --border-width: 2px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+/* src/app/home/home.page.scss */
+
+/* Botón Ver Ruta */
+ion-button.map-btn {
+  --background: var(--primary-color);
+  --color: #ffffff;
+  --border-radius: var(--border-radius);
+  margin-right: var(--spacing-sm);
+  height: 2.5rem;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+/* Botón Entregar */
+ion-button.deliver {
+  --background: #4caf50;
+  --color: #ffffff;
+  --border-radius: var(--border-radius);
+  height: 2.5rem;
 }
 
-#container a {
-  text-decoration: none;
+/* Botón Rechazar */
+ion-button.reject {
+  --background: #f44336;
+  --color: #ffffff;
+  --border-radius: var(--border-radius);
+  height: 2.5rem;
+}
+
+/* Asegura que los tres botones queden alineados y con la misma altura */
+.action-btn-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+
+/* Iconos un poco más grandes */
+ion-button.action-btn ion-icon {
+  font-size: 1.2rem;
+}
+.action-btn-group {
+  display: flex;
+  padding-left: 3em;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+.map-alert-open {
+  --color: var(--primary-color);
+  font-weight: bold;
+}
+
+.map-alert-close {
+  --color: var(--text-muted);
+}
+:host ::ng-deep ion-alert.custom-alert-home .alert-input input {
+  color: #000 !important;
+}
+:host ::ng-deep ion-alert.custom-alert-home .alert-input input::placeholder {
+  color: #666 !important;
+}
+.toolbar-row {
+ 
+ 
+  
+  gap: 1em;
+  
+}
+
+.logout-btn {
+  background-color: #c2c2bd;
+  border-style:inherit;
+  display: flex;
+  margin-left: 29em;
+  align-items: flex-end;
+  font-weight: 600;
+  --background: #000;
+  --color: #0a0a0a;
+
 }

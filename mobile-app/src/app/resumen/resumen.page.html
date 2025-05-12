@@ -1,0 +1,39 @@
+<!-- src/app/resumen/resumen.page.html -->
+
+<ion-header>
+
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-segment
+    [(ngModel)]="selectedPeriod"
+    (ionChange)="onPeriodChange(selectedPeriod)"
+    color="primary"
+  >
+    <ion-segment-button value="total">Total</ion-segment-button>
+    <ion-segment-button value="semanal">Semanal</ion-segment-button>
+    <ion-segment-button value="mensual">Mensual</ion-segment-button>
+  </ion-segment>
+
+  <div *ngIf="loading" class="ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+  <div *ngIf="error" class="ion-text-center" color="danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <h2>Pedidos {{ selectedPeriod | titlecase }}: {{ count }}</h2>
+    <ion-list *ngIf="count > 0">
+      <ion-item *ngFor="let d of mostrados">
+        <ion-label>
+          <h3>{{ d.local }}</h3>
+          <p>{{ d.fecha.toDate() | date:'short' }} — {{ d.estado }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <div *ngIf="count === 0" class="ion-text-center ion-padding">
+      No hay despachos en este período.
+    </div>
+  </div>
+</ion-content>
