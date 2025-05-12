@@ -46,4 +46,8 @@ export class RecuperarPage {
       this.loading = false;
     }
   }
+
+  goToLogin() {
+  window.location.href = '/login';
+}
 }

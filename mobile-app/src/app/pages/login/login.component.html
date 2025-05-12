@@ -36,8 +36,9 @@
     </form>
 
     <!-- Botón fuera del form y con type="button" -->
-    <button routerLink="/recuperar" class="btn-recover" type="button">
-      ¿Olvidaste tu contraseña?
-    </button>
+  <!-- Botón fuera del form y con recarga forzada -->
+<button class="btn-recover" type="button" (click)="goToRecuperar()">
+  ¿Olvidaste tu contraseña?
+</button>
   </div>
 </div>

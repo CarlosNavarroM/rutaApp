@@ -31,11 +31,17 @@ export class LoginComponent {
     this.errorMessage = '';
     try {
       await this.authService.login(this.email, this.password);
-      this.router.navigate(['/home']);
+      window.location.href = '/home';
     } catch {
       this.errorMessage = 'Credenciales inválidas';
     } finally {
       this.loading = false;
     }
   }
+
+  // ✅ Redirección a /recuperar con recarga total
+  goToRecuperar(): void {
+    window.location.href = '/recuperar';
+  }
+
 }
