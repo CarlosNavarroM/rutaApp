@@ -219,4 +219,31 @@ export class HomePage implements OnInit {
     const toast = await this.toastCtrl.create({ message, duration: 1500, color });
     await toast.present();
   }
+
+  public logout(): void {
+  this.authService.logout().then(() => {
+    window.location.href = '/login'; // recarga completa al salir
+  });
+}
+public async confirmLogout(): Promise<void> {
+  const alert = await this.alertCtrl.create({
+    header: 'Cerrar sesión',
+    message: '¿Estás seguro que deseas salir?',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Salir',
+        handler: async () => {
+          await this.authService.logout();
+          window.location.href = '/login';
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
 }

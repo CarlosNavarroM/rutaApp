@@ -131,3 +131,22 @@ ion-button.action-btn ion-icon {
 :host ::ng-deep ion-alert.custom-alert-home .alert-input input::placeholder {
   color: #666 !important;
 }
+.toolbar-row {
+ 
+ 
+  
+  gap: 1em;
+  
+}
+
+.logout-btn {
+  background-color: #c2c2bd;
+  border-style:inherit;
+  display: flex;
+  margin-left: 29em;
+  align-items: flex-end;
+  font-weight: 600;
+  --background: #000;
+  --color: #0a0a0a;
+
+}

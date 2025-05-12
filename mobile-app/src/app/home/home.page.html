@@ -1,30 +1,43 @@
-<!-- src/app/home/home.page.html -->
-
 <ion-header>
   <ion-toolbar>
     <ion-title>Mis Despachos</ion-title>
-    <ion-segment
-      [(ngModel)]="selectedSegment"
-      (ionChange)="onSegmentChanged()"
-      color="primary"
-    >
-      <ion-segment-button value="pendientes">
-        <ion-icon name="watch-outline"></ion-icon>
-        <span>Pendientes</span>
-      </ion-segment-button>
-      <ion-segment-button value="completados">
-        <ion-icon name="checkmark-done-outline"></ion-icon>
-        <span>Completados</span>
-      </ion-segment-button>
-      <ion-segment-button value="rechazados">
-        <ion-icon name="close-circle-outline"></ion-icon>
-        <span>Rechazados</span>
-      </ion-segment-button>
-      <ion-segment-button value="resumen">
-        <ion-icon name="stats-chart-outline"></ion-icon>
-        <span>Resumen</span>
-      </ion-segment-button>
-    </ion-segment>
+    <div class="toolbar-row">
+      <ion-segment
+        [(ngModel)]="selectedSegment"
+        (ionChange)="onSegmentChanged()"
+        color="primary"
+      >
+        <ion-segment-button value="pendientes">
+          <ion-icon name="watch-outline"></ion-icon>
+          <span>Pendientes</span>
+        </ion-segment-button>
+        <ion-segment-button value="completados">
+          <ion-icon name="checkmark-done-outline"></ion-icon>
+          <span>Completados</span>
+        </ion-segment-button>
+        <ion-segment-button value="rechazados">
+          <ion-icon name="close-circle-outline"></ion-icon>
+          <span>Rechazados</span>
+        </ion-segment-button>
+        <ion-segment-button value="resumen">
+          <ion-icon name="stats-chart-outline"></ion-icon>
+          <span>Resumen</span>
+        </ion-segment-button>
+      </ion-segment>
+
+      <!-- Botón cerrar sesión -->
+  <ion-button
+  class="logout-btn"
+  fill="solid"
+  shape="round"
+  color="dark"
+  size="small"
+  (click)="confirmLogout()"
+>
+  <ion-icon slot="start" name="log-out-outline"></ion-icon>
+  Salir
+    </ion-button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
