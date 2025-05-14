@@ -2,6 +2,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ApplicationRef } from '@angular/core';
+import { first } from 'rxjs/operators';
 import { FirebaseDatabaseService } from '../../services/firebase-database.service';
 import { orderBy, where, QueryConstraint } from 'firebase/firestore';
 import { Observable, BehaviorSubject, switchMap, forkJoin, map, Subject, takeUntil, from } from 'rxjs';
@@ -101,40 +103,41 @@ trackByNombre(index: number, item: { nombre: string }): string {
     fecha: ''
   };
 
-  constructor(private dbService: FirebaseDatabaseService) {}
+  constructor(private dbService: FirebaseDatabaseService, private appRef: ApplicationRef) {}
 
-  ngOnInit() {
-    // Cargar datos de Firestore para cada entidad
+  ngOnInit(): void {
+  // Ejecuta la lógica solo cuando la app esté estable (útil para SSR)
+  this.appRef.isStable.pipe(first(stable => stable)).subscribe(() => {
+    // Inicia solo después de estabilización
     this.conductores$ = from(this.dbService.readCollection('CONDUCTOR')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Conductor)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
     this.transportes$ = from(this.dbService.readCollection('TRANSPORTE')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Transporte)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
     this.tiposCarga$ = from(this.dbService.readCollection('TIPO_CARGA')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as TipoCarga)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
     this.turnos$ = from(this.dbService.readCollection('TURNO')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Turno)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
     this.vueltas$ = from(this.dbService.readCollection('VUELTA')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Vuelta)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
     this.locales$ = from(this.dbService.readCollection('LOCAL')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Local)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
     this.gestiones$ = from(this.dbService.readCollection('GESTION')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Gestion)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
     this.estados$ = from(this.dbService.readCollection('ESTADO')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Estado)))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     );
 
-    // Suscribirse a datos y registros
-    this.subscribeToFormOptions(); 
+    this.subscribeToFormOptions();
     this.subscribeToRegistros();
-  }
-
+  });
+}
   ngOnDestroy() {
     // Cancelar suscripciones al destruir el componente
     this.destroy$.next();

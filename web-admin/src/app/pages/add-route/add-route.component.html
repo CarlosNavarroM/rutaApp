@@ -1,17 +1,13 @@
-
 <!-- Formulario para agregar un nuevo registro -->
-<div class="form-container">
-  <h3>Agregar Registro</h3>
-  <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm">
-    
-    <!-- Campo de fecha y hora -->
-    <div>
+<div class="form-card">
+  <h2>Agregar Registro</h2>
+  <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm" class="form-grid">
+    <div class="form-group">
       <label for="fecha">Fecha y Hora:</label>
-      <input type="datetime-local" id="fecha" [(ngModel)]="nuevoRegistro.fecha" name="fecha" required autocomplete="off" aria-label="Fecha y hora del despacho" />
+      <input type="datetime-local" id="fecha" [(ngModel)]="nuevoRegistro.fecha" name="fecha" required />
     </div>
 
-    <!-- Selector de turno -->
-    <div *ngIf="turnos$ | async as turnos">
+    <div *ngIf="turnos$ | async as turnos" class="form-group">
       <label for="turno">Turno:</label>
       <select id="turno" [(ngModel)]="nuevoRegistro.turno" name="turno" required>
         <option value="" disabled>Seleccionar Turno</option>
@@ -19,8 +15,7 @@
       </select>
     </div>
 
-    <!-- Selector de vuelta -->
-    <div *ngIf="vueltas$ | async as vueltas">
+    <div *ngIf="vueltas$ | async as vueltas" class="form-group">
       <label for="vuelta">Vuelta:</label>
       <select id="vuelta" [(ngModel)]="nuevoRegistro.vuelta" name="vuelta" required>
         <option value="" disabled>Seleccionar Vuelta</option>
@@ -28,8 +23,7 @@
       </select>
     </div>
 
-    <!-- Selector de gestión -->
-    <div *ngIf="gestiones$ | async as gestiones">
+    <div *ngIf="gestiones$ | async as gestiones" class="form-group">
       <label for="gestion">Gestión:</label>
       <select id="gestion" [(ngModel)]="nuevoRegistro.gestion" name="gestion" required>
         <option value="" disabled>Seleccionar Gestión</option>
@@ -37,8 +31,7 @@
       </select>
     </div>
 
-    <!-- Selector de local -->
-    <div *ngIf="locales$ | async as locales">
+    <div *ngIf="locales$ | async as locales" class="form-group">
       <label for="local">Local:</label>
       <select id="local" [(ngModel)]="nuevoRegistro.local" name="local" required>
         <option value="" disabled>Seleccionar Local</option>
@@ -46,8 +39,7 @@
       </select>
     </div>
 
-    <!-- Selector de conductor -->
-    <div *ngIf="conductores$ | async as conductores">
+    <div *ngIf="conductores$ | async as conductores" class="form-group">
       <label for="conductor">Conductor:</label>
       <select id="conductor" [(ngModel)]="nuevoRegistro.conductor" name="conductor" required>
         <option value="" disabled>Seleccionar Conductor</option>
@@ -55,8 +47,7 @@
       </select>
     </div>
 
-    <!-- Selector de transporte -->
-    <div *ngIf="transportes$ | async as transportes">
+    <div *ngIf="transportes$ | async as transportes" class="form-group">
       <label for="transporte">Transporte:</label>
       <select id="transporte" [(ngModel)]="nuevoRegistro.transporte" name="transporte" required>
         <option value="" disabled>Seleccionar Transporte</option>
@@ -64,8 +55,7 @@
       </select>
     </div>
 
-    <!-- Selector de tipo de carga -->
-    <div *ngIf="tiposCarga$ | async as tiposCarga">
+    <div *ngIf="tiposCarga$ | async as tiposCarga" class="form-group">
       <label for="tipo_carga">Tipo Carga:</label>
       <select id="tipo_carga" [(ngModel)]="nuevoRegistro.tipo_carga" name="tipo_carga" required>
         <option value="" disabled>Seleccionar Tipo de Carga</option>
@@ -73,8 +63,7 @@
       </select>
     </div>
 
-    <!-- Selector de estado -->
-    <div *ngIf="estados$ | async as estados">
+    <div *ngIf="estados$ | async as estados" class="form-group">
       <label for="estado">Estado:</label>
       <select id="estado" [(ngModel)]="nuevoRegistro.estado" name="estado" required>
         <option value="" disabled>Seleccionar Estado</option>
@@ -82,78 +71,67 @@
       </select>
     </div>
 
-    <!-- Botón para enviar el formulario -->
-    <button type="submit" [disabled]="!registroForm.form.valid">
-      Agregar Registro
-    </button>
+    <div class="form-actions">
+      <button type="submit" [disabled]="!registroForm.form.valid">Agregar Registro</button>
+    </div>
   </form>
 </div>
 
 <!-- Sección de filtros -->
-<div class="filter-container">
-  <h3>Filtrar Registros</h3>
-  <div class="filter-controls">
-
-    <!-- Filtro por conductor -->
-    <div *ngIf="conductores$ | async as conductores">
+<div class="filter-card">
+  <h2>Filtrar Registros</h2>
+  <div class="form-grid">
+    <div *ngIf="conductores$ | async as conductores" class="form-group">
       <label for="filterConductor">Conductor:</label>
       <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor" (change)="applyFilters()">
         <option value="">Todos los Conductores</option>
         <option *ngFor="let conductor of conductores; trackBy: trackByNombre" [value]="conductor.nombre">{{ conductor.nombre }}</option>
       </select>
     </div>
-
-    <!-- Filtro por fecha -->
-    <div>
+    <div class="form-group">
       <label for="filterFecha">Fecha:</label>
       <input type="date" id="filterFecha" [(ngModel)]="filterCriteria.fecha" name="filterFecha" (change)="applyFilters()">
     </div>
-
-    <!-- Filtro por turno -->
-    <div *ngIf="turnos$ | async as turnos">
+    <div *ngIf="turnos$ | async as turnos" class="form-group">
       <label for="filterTurno">Turno:</label>
       <select id="filterTurno" [(ngModel)]="filterCriteria.turno" name="filterTurno" (change)="applyFilters()">
         <option value="">Todos los Turnos</option>
         <option *ngFor="let turno of turnos; trackBy: trackByNombre" [value]="turno.nombre">{{ turno.nombre }}</option>
       </select>
     </div>
-
-    <!-- Botón para limpiar filtros -->
-    <button type="button" (click)="resetFilters()">Limpiar Filtros</button>
+    <div class="form-actions">
+      <button class ="btn-limpiar"type="button" (click)="resetFilters()">Limpiar Filtros</button>
+    </div>
   </div>
 </div>
 
-<!-- Título de la tabla -->
-<h3>Últimos Registros</h3>
-
-<!-- Indicador de carga -->
-<div *ngIf="cargando" class="loading">Cargando datos...</div>
-
 <!-- Tabla de registros -->
-<div *ngIf="!cargando && (registros$ | async) as registros">
-  <div *ngIf="registros.length > 0" class="table-container">
-    <div class="scrollable-table-wrapper">
-      <table class="styled-table" role="table">
+<div class="table-card">
+  <h2>Últimos Registros</h2>
+  <div *ngIf="cargando" class="loading-indicator">Cargando registros...</div>
+
+  <div *ngIf="!cargando && (registros$ | async) as registros">
+    <div *ngIf="registros.length > 0">
+      <table class="styled-table">
         <thead>
           <tr>
-            <th scope="col">Fecha</th>
-            <th scope="col">Hora</th>
-            <th scope="col">Turno</th>
-            <th scope="col">Vuelta</th>
-            <th scope="col">Gestión</th>
-            <th scope="col">Local</th>
-            <th scope="col">Conductor</th>
-            <th scope="col">Transporte</th>
-            <th scope="col">Tipo Carga</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Acciones</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Turno</th>
+            <th>Vuelta</th>
+            <th>Gestión</th>
+            <th>Local</th>
+            <th>Conductor</th>
+            <th>Transporte</th>
+            <th>Tipo Carga</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Fila por cada registro -->
           <tr *ngFor="let item of registros; trackBy: trackById">
-            <td>{{ item.fecha?.toDate ? (item.fecha.toDate() | date : 'dd/MM/yyyy') : (item.fecha | date : 'dd/MM/yyyy') }}</td>
-            <td>{{ item.fecha?.toDate ? (item.fecha.toDate() | date : 'HH:mm') : (item.fecha | date : 'HH:mm') }}</td>
+            <td>{{ item.fecha | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ item.fecha | date: 'HH:mm' }}</td>
             <td>{{ item.turno }}</td>
             <td>{{ item.vuelta }}</td>
             <td>{{ item.gestion }}</td>
@@ -163,17 +141,14 @@
             <td>{{ item.tipo_carga }}</td>
             <td>{{ item.estado }}</td>
             <td>
-              <!-- Botón para eliminar registro -->
-              <button type="button" (click)="confirmarEliminar(item.id)">❌</button>
+              <button type="button" (click)="confirmarEliminar(item.id)" class="btn-delete">❌</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
-
-  <!-- Mensaje si no hay registros -->
-  <div *ngIf="registros.length === 0" class="no-data">
-    No hay registros disponibles.
+    <div *ngIf="registros.length === 0" class="no-data">
+      No hay registros disponibles.
+    </div>
   </div>
 </div>
