@@ -1,8 +1,7 @@
 // Importaciones necesarias de Angular, módulos comunes y servicios
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ApplicationRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApplicationRef } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { FirebaseDatabaseService } from '../../services/firebase-database.service';
 import { orderBy, where, QueryConstraint } from 'firebase/firestore';
@@ -29,10 +28,10 @@ trackByNombre(index: number, item: { nombre: string }): string {
   
 
   // Control de destrucción de suscripciones
-  private destroy$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
 
   // Disparador para recargar datos
-  private refreshData$ = new BehaviorSubject<void>(undefined);
+  private readonly refreshData$ = new BehaviorSubject<void>(undefined);
 
   // Criterios de filtro para búsqueda de registros
   filterCriteria = {
@@ -70,7 +69,11 @@ trackByNombre(index: number, item: { nombre: string }): string {
     // Convertir fechas a objetos Date
     map((registros: any[]) => {
       return registros.map((registro: any) => {
-        registro.fecha = registro.fecha?.toDate ? registro.fecha.toDate() : (registro.fecha instanceof Date ? registro.fecha : new Date(registro.fecha));
+        if (registro.fecha?.toDate) {
+          registro.fecha = registro.fecha.toDate();
+        } else if (!(registro.fecha instanceof Date)) {
+          registro.fecha = new Date(registro.fecha);
+        }
         return registro;
       });
     }),
@@ -103,7 +106,7 @@ trackByNombre(index: number, item: { nombre: string }): string {
     fecha: ''
   };
 
-  constructor(private dbService: FirebaseDatabaseService, private appRef: ApplicationRef) {}
+  constructor(private readonly dbService: FirebaseDatabaseService, private readonly appRef: ApplicationRef) {}
 
   ngOnInit(): void {
   // Ejecuta la lógica solo cuando la app esté estable (útil para SSR)
