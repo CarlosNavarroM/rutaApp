@@ -26,7 +26,7 @@ export class RegisterDriverComponent {
   errorMessage: string = '';
   loading: boolean = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   async onRegister(): Promise<void> {
     if (!this.conductor.nombre || !this.conductor.correo || !this.conductor.rut || !this.conductor.licencia) {
@@ -42,6 +42,7 @@ export class RegisterDriverComponent {
       await this.authService.registerConductor(this.conductor);
       this.successMessage = 'Conductor registrado exitosamente. Se ha enviado un correo para restablecer la contraseña.';
     } catch (error) {
+      console.error('Error details:', error);
       this.errorMessage = 'Error al registrar al conductor. Por favor, inténtalo de nuevo.';
     } finally {
       this.loading = false;

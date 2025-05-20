@@ -17,7 +17,7 @@ export class LoginComponent {
   errorMessage: string = '';
   loading: boolean = false;
 
-  constructor(private readonly router: Router, private authService: AuthService) {}
+  constructor(private readonly router: Router, private readonly authService: AuthService) {}
 
   async onLogin(): Promise<void> {
     if (!this.email || !this.password) {
@@ -30,8 +30,9 @@ export class LoginComponent {
 
     try {
       await this.authService.login(this.email, this.password);
-      this.router.navigate(['/dashboard']); // Redirige al dashboard tras el login exitoso
+      this.router.navigate(['/add-route']); // Redirige al dashboard tras el login exitoso
     } catch (error) {
+      console.error('Login error:', error); // Log the error for debugging
       this.errorMessage = 'Credenciales inválidas';
     } finally {
       this.loading = false;
