@@ -1,154 +1,164 @@
-<!-- Formulario para agregar un nuevo registro -->
-<div class="form-card">
-  <h2>Agregar Registro</h2>
-  <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm" class="form-grid">
-    <div class="form-group">
-      <label for="fecha">Fecha y Hora:</label>
-      <input type="datetime-local" id="fecha" [(ngModel)]="nuevoRegistro.fecha" name="fecha" required />
-    </div>
-
-    <div *ngIf="turnos$ | async as turnos" class="form-group">
-      <label for="turno">Turno:</label>
-      <select id="turno" [(ngModel)]="nuevoRegistro.turno" name="turno" required>
-        <option value="" disabled>Seleccionar Turno</option>
-        <option *ngFor="let item of turnos; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
-      </select>
-    </div>
-
-    <div *ngIf="vueltas$ | async as vueltas" class="form-group">
-      <label for="vuelta">Vuelta:</label>
-      <select id="vuelta" [(ngModel)]="nuevoRegistro.vuelta" name="vuelta" required>
-        <option value="" disabled>Seleccionar Vuelta</option>
-        <option *ngFor="let item of vueltas; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
-      </select>
-    </div>
-
-    <div *ngIf="gestiones$ | async as gestiones" class="form-group">
-      <label for="gestion">Gestión:</label>
-      <select id="gestion" [(ngModel)]="nuevoRegistro.gestion" name="gestion" required>
-        <option value="" disabled>Seleccionar Gestión</option>
-        <option *ngFor="let item of gestiones; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
-      </select>
-    </div>
-
-    <div *ngIf="locales$ | async as locales" class="form-group">
-      <label for="local">Local:</label>
-      <select id="local" [(ngModel)]="nuevoRegistro.local" name="local" required>
-        <option value="" disabled>Seleccionar Local</option>
-        <option *ngFor="let item of locales; trackBy: trackByNombre" [value]="item.local">{{ item.local }}</option>
-      </select>
-    </div>
-
-    <div *ngIf="conductores$ | async as conductores" class="form-group">
-      <label for="conductor">Conductor:</label>
-      <select id="conductor" [(ngModel)]="nuevoRegistro.conductor" name="conductor" required>
-        <option value="" disabled>Seleccionar Conductor</option>
-        <option *ngFor="let item of conductores; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
-      </select>
-    </div>
-
-    <div *ngIf="transportes$ | async as transportes" class="form-group">
-      <label for="transporte">Transporte:</label>
-      <select id="transporte" [(ngModel)]="nuevoRegistro.transporte" name="transporte" required>
-        <option value="" disabled>Seleccionar Transporte</option>
-        <option *ngFor="let item of transportes; trackBy: trackByNombre" [value]="item.patente">{{ item.patente }}</option>
-      </select>
-    </div>
-
-    <div *ngIf="tiposCarga$ | async as tiposCarga" class="form-group">
-      <label for="tipo_carga">Tipo Carga:</label>
-      <select id="tipo_carga" [(ngModel)]="nuevoRegistro.tipo_carga" name="tipo_carga" required>
-        <option value="" disabled>Seleccionar Tipo de Carga</option>
-        <option *ngFor="let item of tiposCarga; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
-      </select>
-    </div>
-
-    <div *ngIf="estados$ | async as estados" class="form-group">
-      <label for="estado">Estado:</label>
-      <select id="estado" [(ngModel)]="nuevoRegistro.estado" name="estado" required>
-        <option value="" disabled>Seleccionar Estado</option>
-        <option *ngFor="let item of estados; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
-      </select>
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" [disabled]="!registroForm.form.valid">Agregar Registro</button>
-    </div>
-  </form>
+<div *ngIf="cargando" class="full-page-loader">
+  <!-- Asegúrate de que esta imagen esté en tu carpeta 'public/assets/' o 'src/assets/'
+       según la configuración de 'assets' en tu angular.json.
+       Si tu angular.json mapea 'public' a la raíz de los assets, entonces 'assets/project-logo.png' es la ruta correcta. -->
+  <img src="assets/loader.png" alt="Cargando Proyecto..." class="loader-image" />
+  <p class="loading-text">Cargando información...</p>
 </div>
 
-<!-- Sección de filtros -->
-<div class="filter-card">
-  <h2>Filtrar Registros</h2>
-  <div class="form-grid">
-    <div *ngIf="conductores$ | async as conductores" class="form-group">
-      <label for="filterConductor">Conductor:</label>
-      <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor" (change)="applyFilters()">
-        <option value="">Todos los Conductores</option>
-        <option *ngFor="let conductor of conductores; trackBy: trackByNombre" [value]="conductor.nombre">{{ conductor.nombre }}</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="filterFecha">Fecha:</label>
-      <input type="date" id="filterFecha" [(ngModel)]="filterCriteria.fecha" name="filterFecha" (change)="applyFilters()">
-    </div>
-    <div *ngIf="turnos$ | async as turnos" class="form-group">
-      <label for="filterTurno">Turno:</label>
-      <select id="filterTurno" [(ngModel)]="filterCriteria.turno" name="filterTurno" (change)="applyFilters()">
-        <option value="">Todos los Turnos</option>
-        <option *ngFor="let turno of turnos; trackBy: trackByNombre" [value]="turno.nombre">{{ turno.nombre }}</option>
-      </select>
-    </div>
-    <div class="form-actions">
-      <button class ="btn-limpiar"type="button" (click)="resetFilters()">Limpiar Filtros</button>
+<div *ngIf="!cargando" class="main-content-wrapper">
+  <div class="form-card">
+    <h2>Agregar Registro</h2>
+    <form (ngSubmit)="agregarRegistro()" #registroForm="ngForm" class="form-grid">
+      <div class="form-group">
+        <label for="fecha">Fecha y Hora:</label>
+        <input type="datetime-local" id="fecha" [(ngModel)]="nuevoRegistro.fecha" name="fecha" required />
+      </div>
+
+      <div *ngIf="turnos$ | async as turnos" class="form-group">
+        <label for="turno">Turno:</label>
+        <select id="turno" [(ngModel)]="nuevoRegistro.turno" name="turno" required>
+          <option value="" disabled>Seleccionar Turno</option>
+          <option *ngFor="let item of turnos; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="vueltas$ | async as vueltas" class="form-group">
+        <label for="vuelta">Vuelta:</label>
+        <select id="vuelta" [(ngModel)]="nuevoRegistro.vuelta" name="vuelta" required>
+          <option value="" disabled>Seleccionar Vuelta</option>
+          <option *ngFor="let item of vueltas; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="gestiones$ | async as gestiones" class="form-group">
+        <label for="gestion">Gestión:</label>
+        <select id="gestion" [(ngModel)]="nuevoRegistro.gestion" name="gestion" required>
+          <option value="" disabled>Seleccionar Gestión</option>
+          <option *ngFor="let item of gestiones; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="locales$ | async as locales" class="form-group">
+        <label for="local">Local:</label>
+        <select id="local" [(ngModel)]="nuevoRegistro.local" name="local" required>
+          <option value="" disabled>Seleccionar Local</option>
+          <option *ngFor="let item of locales; trackBy: trackByLocal" [value]="item.local">{{ item.local }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="conductores$ | async as conductores" class="form-group">
+        <label for="conductor">Conductor:</label>
+        <select id="conductor" [(ngModel)]="nuevoRegistro.conductor" name="conductor" required>
+          <option value="" disabled>Seleccionar Conductor</option>
+          <option *ngFor="let item of conductores; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="transportes$ | async as transportes" class="form-group">
+        <label for="transporte">Transporte:</label>
+        <select id="transporte" [(ngModel)]="nuevoRegistro.transporte" name="transporte" required>
+          <option value="" disabled>Seleccionar Transporte</option>
+          <option *ngFor="let item of transportes; trackBy: trackByPatente" [value]="item.patente">{{ item.patente }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="tiposCarga$ | async as tiposCarga" class="form-group">
+        <label for="tipo_carga">Tipo Carga:</label>
+        <select id="tipo_carga" [(ngModel)]="nuevoRegistro.tipo_carga" name="tipo_carga" required>
+          <option value="" disabled>Seleccionar Tipo de Carga</option>
+          <option *ngFor="let item of tiposCarga; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="estados$ | async as estados" class="form-group">
+        <label for="estado">Estado:</label>
+        <select id="estado" [(ngModel)]="nuevoRegistro.estado" name="estado" required>
+          <option value="" disabled>Seleccionar Estado</option>
+          <option *ngFor="let item of estados; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="!registroForm.form.valid">Agregar Registro</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="filter-card">
+    <h2>Filtrar Registros</h2>
+    <div class="form-grid">
+      <div *ngIf="conductores$ | async as conductores" class="form-group">
+        <label for="filterConductor">Conductor:</label>
+        <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor" (change)="applyFilters()">
+          <option value="">Todos los Conductores</option>
+          <option *ngFor="let conductor of conductores; trackBy: trackByNombre" [value]="conductor.nombre">{{ conductor.nombre }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="filterFecha">Fecha:</label>
+        <input type="datetime-local" id="filterFecha" [(ngModel)]="filterCriteria.fecha" name="filterFecha" (change)="applyFilters()">
+      </div>
+      <div *ngIf="turnos$ | async as turnos" class="form-group">
+        <label for="filterTurno">Turno:</label>
+        <select id="filterTurno" [(ngModel)]="filterCriteria.turno" name="filterTurno" (change)="applyFilters()">
+          <option value="">Todos los Turnos</option>
+          <option *ngFor="let turno of turnos; trackBy: trackByNombre" [value]="turno.nombre">{{ turno.nombre }}</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class ="btn-limpiar"type="button" (click)="resetFilters()">Limpiar Filtros</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Tabla de registros -->
-<div class="table-card">
-  <h2>Últimos Registros</h2>
-  <div *ngIf="cargando" class="loading-indicator">Cargando registros...</div>
+  <div class="table-card">
+    <h2>Últimos Registros</h2>
+    <!-- El indicador de carga interno de la tabla se mostrará si 'cargando' es true,
+         pero el loader de página completa lo cubrirá inicialmente.
+         Podrías eliminar este div si el loader de página completa es suficiente. -->
+    <div *ngIf="cargando" class="loading-indicator">Cargando registros...</div>
 
-  <div *ngIf="!cargando && (registros$ | async) as registros">
-    <div *ngIf="registros.length > 0">
-      <table class="styled-table">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Turno</th>
-            <th>Vuelta</th>
-            <th>Gestión</th>
-            <th>Local</th>
-            <th>Conductor</th>
-            <th>Transporte</th>
-            <th>Tipo Carga</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of registros; trackBy: trackById">
-            <td>{{ item.fecha | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ item.fecha | date: 'HH:mm' }}</td>
-            <td>{{ item.turno }}</td>
-            <td>{{ item.vuelta }}</td>
-            <td>{{ item.gestion }}</td>
-            <td>{{ item.local }}</td>
-            <td>{{ item.conductor }}</td>
-            <td>{{ item.transporte }}</td>
-            <td>{{ item.tipo_carga }}</td>
-            <td>{{ item.estado }}</td>
-            <td>
-              <button type="button" (click)="confirmarEliminar(item.id)" class="btn-delete">❌</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div *ngIf="registros.length === 0" class="no-data">
-      No hay registros disponibles.
+    <div *ngIf="!cargando && (registros$ | async) as registros">
+      <div *ngIf="registros.length > 0">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Turno</th>
+              <th>Vuelta</th>
+              <th>Gestión</th>
+              <th>Local</th>
+              <th>Conductor</th>
+              <th>Transporte</th>
+              <th>Tipo Carga</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of registros; trackBy: trackById">
+              <td>{{ item.fecha | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ item.fecha | date: 'HH:mm' }}</td>
+              <td>{{ item.turno }}</td>
+              <td>{{ item.vuelta }}</td>
+              <td>{{ item.gestion }}</td>
+              <td>{{ item.local }}</td>
+              <td>{{ item.conductor }}</td>
+              <td>{{ item.transporte }}</td>
+              <td>{{ item.tipo_carga }}</td>
+              <td>{{ item.estado }}</td>
+              <td>
+                <button type="button" (click)="confirmarEliminar(item.id)" class="btn-delete">❌</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="registros.length === 0" class="no-data">
+        No hay registros disponibles.
+      </div>
     </div>
   </div>
 </div>

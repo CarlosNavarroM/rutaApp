@@ -1,10 +1,71 @@
+/* Estilos para el cargador de página completa */
+.full-page-loader {
+  position: fixed; /* Fija el loader en el viewport */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Ocupa todo el ancho del viewport */
+  height: 100vh; /* Ocupa toda la altura del viewport */
+  display: flex;
+  flex-direction: column; /* Apila la imagen y el texto verticalmente */
+  justify-content: center; /* Centra el contenido verticalmente */
+  align-items: center; /* Centra el contenido horizontalmente */
+  /* background-color: var(--background-color); */ /* ¡ELIMINADO! Esto permitía que el fondo global se vea */
+  z-index: 9999; /* Asegura que esté por encima de todo lo demás */
+  color: var(--text-color); /* Color del texto de carga */
+}
+
+.loader-image {
+  max-width: 90000px; /* Tamaño máximo para el logo de carga */
+  height: auto; /* Mantiene la proporción */
+  animation: pulse 2s infinite ease-in-out; /* Animación de pulsación suave para el logo */
+  margin-bottom: 20px; /* Espacio entre la imagen y el texto de carga */
+}
+
+.loading-text {
+  font-size: var(--font-size-lg);
+  color: var(--text-muted);
+}
+
+/* Animación de pulsación para el logo */
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+}
+
+---
+
+/* Estilos para el contenedor principal del contenido (cuando el loader no está visible) */
+.main-content-wrapper {
+  /* Asegura que el contenido principal ocupe el espacio necesario y se vea correctamente */
+  padding: 1rem; /* Ajusta el padding según tu diseño general */
+  min-height: 100vh; /* Asegura que el contenido ocupe al menos toda la altura de la pantalla */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Espacio entre las tarjetas de formulario y tabla */
+  align-items: center; /* **Añadido: Centra los elementos hijos (tarjetas) horizontalmente** */
+}
+
+/* --- ESTILOS EXISTENTES DEL USUARIO, INTEGRADOS Y AJUSTADOS --- */
+
 h2 {
-  color: black;
+  color: black; /* Esto puede ser difícil de leer si el fondo de la tarjeta es muy oscuro. Considera cambiarlo a blanco o una variable. */
   margin-bottom: 1rem;
 }
 
+/* Nota: ::ng-deep está obsoleto y puede ser eliminado en futuras versiones de Angular.
+   Es mejor aplicar estilos a los botones directamente o usar variables CSS. */
 :host ::ng-deep button {
-  background-color: #666 !important;
+  background-color: #666 !important; /* Considera usar una variable aquí */
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -15,13 +76,15 @@ h2 {
 .form-card,
 .filter-card,
 .table-card {
-  margin: 1rem auto;
+  margin: 1rem auto; /* `auto` para centrar horizontalmente dentro del contenedor `main-content-wrapper` */
   padding: 1rem;
-  background-color: #00bcd4;
+  background-color: #00bcd4; /* Fondo de las tarjetas, usa tu primary-color */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
   max-width: 100%;
-  color: black;
+  color: black; /* Color del texto dentro de las tarjetas */
+  width: 100%; /* **Asegura que las tarjetas ocupen el ancho disponible y luego se centren** */
+  box-sizing: border-box; /* **Añadido: Incluye padding y border en el ancho/alto total** */
 }
 
 .form-grid {
@@ -45,10 +108,13 @@ h2 {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  /* Asegúrate de que el color de fondo y texto de los inputs sean legibles */
+  background-color: #2a2a2a; /* Ejemplo de color oscuro para inputs */
+  color: #fff; /* Color de texto para inputs */
 }
 
 .form-actions {
-  grid-column: span 2;
+  grid-column: span 2; /* Esto hará que ocupe 2 columnas en el grid */
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -56,7 +122,7 @@ h2 {
 }
 
 .btn-limpiar {
-  background-color: #1f1e1e;
+  background-color: #1f1e1e; /* Color de fondo para el botón limpiar */
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -78,8 +144,9 @@ h2 {
 }
 
 .styled-table th {
-  background-color: #f4f4f4;
+  background-color: #f4f4f4; /* Fondo de los encabezados de tabla */
   font-weight: bold;
+  color: black; /* Color del texto del encabezado */
 }
 
 .loading-indicator,
@@ -87,7 +154,7 @@ h2 {
   padding: 1rem;
   text-align: center;
   font-style: italic;
-  color: #666;
+  color: #666; /* Color del texto para indicadores de carga/sin datos */
 }
 
 .btn-delete {
@@ -100,7 +167,7 @@ h2 {
 
 @media (max-width: 768px) {
   .form-actions {
-    grid-column: span 1;
+    grid-column: span 1; /* En pantallas pequeñas, ocupa 1 columna */
     justify-content: center;
   }
 
