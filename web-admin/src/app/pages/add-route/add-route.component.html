@@ -1,7 +1,4 @@
 <div *ngIf="cargando" class="full-page-loader">
-  <!-- Asegúrate de que esta imagen esté en tu carpeta 'public/assets/' o 'src/assets/'
-       según la configuración de 'assets' en tu angular.json.
-       Si tu angular.json mapea 'public' a la raíz de los assets, entonces 'assets/project-logo.png' es la ruta correcta. -->
   <img src="assets/loader.png" alt="Cargando Proyecto..." class="loader-image" />
   <p class="loading-text">Cargando información...</p>
 </div>
@@ -35,7 +32,8 @@
         <label for="gestion">Gestión:</label>
         <select id="gestion" [(ngModel)]="nuevoRegistro.gestion" name="gestion" required>
           <option value="" disabled>Seleccionar Gestión</option>
-          <option *ngFor="let item of gestiones; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+          <option *ngFor="let item of gestiones; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}
+          </option>
         </select>
       </div>
 
@@ -51,7 +49,8 @@
         <label for="conductor">Conductor:</label>
         <select id="conductor" [(ngModel)]="nuevoRegistro.conductor" name="conductor" required>
           <option value="" disabled>Seleccionar Conductor</option>
-          <option *ngFor="let item of conductores; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+          <option *ngFor="let item of conductores; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}
+          </option>
         </select>
       </div>
 
@@ -59,7 +58,8 @@
         <label for="transporte">Transporte:</label>
         <select id="transporte" [(ngModel)]="nuevoRegistro.transporte" name="transporte" required>
           <option value="" disabled>Seleccionar Transporte</option>
-          <option *ngFor="let item of transportes; trackBy: trackByPatente" [value]="item.patente">{{ item.patente }}</option>
+          <option *ngFor="let item of transportes; trackBy: trackByPatente" [value]="item.patente">{{ item.patente }}
+          </option>
         </select>
       </div>
 
@@ -67,7 +67,8 @@
         <label for="tipo_carga">Tipo Carga:</label>
         <select id="tipo_carga" [(ngModel)]="nuevoRegistro.tipo_carga" name="tipo_carga" required>
           <option value="" disabled>Seleccionar Tipo de Carga</option>
-          <option *ngFor="let item of tiposCarga; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}</option>
+          <option *ngFor="let item of tiposCarga; trackBy: trackByNombre" [value]="item.nombre">{{ item.nombre }}
+          </option>
         </select>
       </div>
 
@@ -90,24 +91,28 @@
     <div class="form-grid">
       <div *ngIf="conductores$ | async as conductores" class="form-group">
         <label for="filterConductor">Conductor:</label>
-        <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor" (change)="applyFilters()">
+        <select id="filterConductor" [(ngModel)]="filterCriteria.conductor" name="filterConductor"
+          (change)="applyFilters()">
           <option value="">Todos los Conductores</option>
-          <option *ngFor="let conductor of conductores; trackBy: trackByNombre" [value]="conductor.nombre">{{ conductor.nombre }}</option>
+          <option *ngFor="let conductor of conductores; trackBy: trackByNombre" [value]="conductor.nombre">{{
+            conductor.nombre }}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="filterFecha">Fecha:</label>
-        <input type="datetime-local" id="filterFecha" [(ngModel)]="filterCriteria.fecha" name="filterFecha" (change)="applyFilters()">
+        <input type="datetime-local" id="filterFecha" [(ngModel)]="filterCriteria.fecha" name="filterFecha"
+          (change)="applyFilters()">
       </div>
       <div *ngIf="turnos$ | async as turnos" class="form-group">
         <label for="filterTurno">Turno:</label>
         <select id="filterTurno" [(ngModel)]="filterCriteria.turno" name="filterTurno" (change)="applyFilters()">
           <option value="">Todos los Turnos</option>
-          <option *ngFor="let turno of turnos; trackBy: trackByNombre" [value]="turno.nombre">{{ turno.nombre }}</option>
+          <option *ngFor="let turno of turnos; trackBy: trackByNombre" [value]="turno.nombre">{{ turno.nombre }}
+          </option>
         </select>
       </div>
       <div class="form-actions">
-        <button class ="btn-limpiar"type="button" (click)="resetFilters()">Limpiar Filtros</button>
+        <button class="btn-limpiar" type="button" (click)="resetFilters()">Limpiar Filtros</button>
       </div>
     </div>
   </div>

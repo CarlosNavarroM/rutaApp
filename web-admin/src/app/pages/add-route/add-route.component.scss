@@ -1,185 +1,240 @@
-/* Estilos para el cargador de página completa */
-.full-page-loader {
-  position: fixed; /* Fija el loader en el viewport */
-  top: 0;
-  left: 0;
-  width: 100vw; /* Ocupa todo el ancho del viewport */
-  height: 100vh; /* Ocupa toda la altura del viewport */
-  display: flex;
-  flex-direction: column; /* Apila la imagen y el texto verticalmente */
-  justify-content: center; /* Centra el contenido verticalmente */
-  align-items: center; /* Centra el contenido horizontalmente */
-  /* background-color: var(--background-color); */ /* ¡ELIMINADO! Esto permitía que el fondo global se vea */
-  z-index: 9999; /* Asegura que esté por encima de todo lo demás */
-  color: var(--text-color); /* Color del texto de carga */
-}
-
-.loader-image {
-  max-width: 90000px; /* Tamaño máximo para el logo de carga */
-  height: auto; /* Mantiene la proporción */
-  animation: pulse 2s infinite ease-in-out; /* Animación de pulsación suave para el logo */
-  margin-bottom: 20px; /* Espacio entre la imagen y el texto de carga */
-}
-
-.loading-text {
-  font-size: var(--font-size-lg);
-  color: var(--text-muted);
-}
-
-/* Animación de pulsación para el logo */
-@keyframes pulse {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.9);
-    opacity: 0.7;
-  }
-}
-
----
-
-/* Estilos para el contenedor principal del contenido (cuando el loader no está visible) */
-.main-content-wrapper {
-  /* Asegura que el contenido principal ocupe el espacio necesario y se vea correctamente */
-  padding: 1rem; /* Ajusta el padding según tu diseño general */
-  min-height: 100vh; /* Asegura que el contenido ocupe al menos toda la altura de la pantalla */
-  display: flex;
-  flex-direction: column;
-  gap: 1rem; /* Espacio entre las tarjetas de formulario y tabla */
-  align-items: center; /* **Añadido: Centra los elementos hijos (tarjetas) horizontalmente** */
-}
-
-/* --- ESTILOS EXISTENTES DEL USUARIO, INTEGRADOS Y AJUSTADOS --- */
-
 h2 {
-  color: black; /* Esto puede ser difícil de leer si el fondo de la tarjeta es muy oscuro. Considera cambiarlo a blanco o una variable. */
-  margin-bottom: 1rem;
+    color: black;
+    margin-bottom: 1rem;
 }
 
-/* Nota: ::ng-deep está obsoleto y puede ser eliminado en futuras versiones de Angular.
-   Es mejor aplicar estilos a los botones directamente o usar variables CSS. */
-:host ::ng-deep button {
-  background-color: #666 !important; /* Considera usar una variable aquí */
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+button {
+    background-color: #666;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+.btn-limpiar {
+    background-color: #1f1e1e;
+    color: white;
+}
+
+.btn-limpiar:hover {
+    background-color: #333;
+}
+
+.btn-delete {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: red;
 }
 
 .form-card,
 .filter-card,
 .table-card {
-  margin: 1rem auto; /* `auto` para centrar horizontalmente dentro del contenedor `main-content-wrapper` */
-  padding: 1rem;
-  background-color: #00bcd4; /* Fondo de las tarjetas, usa tu primary-color */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  max-width: 100%;
-  color: black; /* Color del texto dentro de las tarjetas */
-  width: 100%; /* **Asegura que las tarjetas ocupen el ancho disponible y luego se centren** */
-  box-sizing: border-box; /* **Añadido: Incluye padding y border en el ancho/alto total** */
+    margin: 1rem auto;
+    padding: 1rem;
+    background-color: #00bcd4;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    max-width: 95vw;
+    width: 100%;
+    color: black;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.table-card {
+    padding: 0.5rem;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
 }
 
 .form-group label {
-  margin-bottom: 0.25rem;
-  font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    font-size: 0.9rem;
 }
 
 .form-group input,
 .form-group select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  /* Asegúrate de que el color de fondo y texto de los inputs sean legibles */
-  background-color: #2a2a2a; /* Ejemplo de color oscuro para inputs */
-  color: #fff; /* Color de texto para inputs */
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #2a2a2a;
+    color: #fff;
 }
 
 .form-actions {
-  grid-column: span 2; /* Esto hará que ocupe 2 columnas en el grid */
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
 }
 
-.btn-limpiar {
-  background-color: #1f1e1e; /* Color de fondo para el botón limpiar */
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
+.scrollable-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
 }
 
 .styled-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
 }
 
 .styled-table th,
 .styled-table td {
-  padding: 0.5rem;
-  text-align: left;
-  border-bottom: 1px solid #ccc;
+    padding: 0.6rem;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    font-size: 0.85rem;
 }
 
 .styled-table th {
-  background-color: #f4f4f4; /* Fondo de los encabezados de tabla */
-  font-weight: bold;
-  color: black; /* Color del texto del encabezado */
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: black;
+    position: sticky;
+    left: 0;
+    z-index: 1;
 }
 
 .loading-indicator,
 .no-data {
-  padding: 1rem;
-  text-align: center;
-  font-style: italic;
-  color: #666; /* Color del texto para indicadores de carga/sin datos */
+    padding: 1rem;
+    text-align: center;
+    font-style: italic;
+    color: #666;
 }
 
-.btn-delete {
-  background: transparent;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: red;
-}
-
-@media (max-width: 768px) {
-  .form-actions {
-    grid-column: span 1; /* En pantallas pequeñas, ocupa 1 columna */
+.full-page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-  }
+    align-items: center;
+    z-index: 9999;
+    color: var(--text-color);
+}
 
-  .form-card,
-  .filter-card,
-  .table-card {
-    padding: 1rem 0.5rem;
-  }
+.loader-image {
+    max-width: 90000px;
+    height: auto;
+    animation: pulse 2s infinite ease-in-out;
+    margin-bottom: 20px;
+}
 
-  .styled-table th,
-  .styled-table td {
-    font-size: 0.8rem;
-    padding: 0.4rem;
-  }
+.loading-text {
+    font-size: var(--font-size-lg);
+    color: var(--text-muted);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+}
+
+.main-content-wrapper {
+    padding: 1rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+@media (min-width: 576px) {
+    .form-card,
+    .filter-card,
+    .table-card {
+        padding: 1.5rem;
+        max-width: 90vw;
+    }
+    .table-card {
+        padding: 1.5rem;
+    }
+    .form-actions {
+        justify-content: flex-end;
+    }
+}
+
+@media (min-width: 768px) {
+    .form-card,
+    .filter-card {
+        max-width: 80vw;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    .form-group label {
+        font-size: 1rem;
+    }
+    .styled-table th,
+    .styled-table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    .btn-delete {
+        font-size: 1.2rem;
+    }
+    .form-actions {
+        grid-column: span 2;
+    }
+}
+
+@media (min-width: 992px) {
+    .form-card,
+    .filter-card,
+    .table-card {
+        max-width: 70vw;
+    }
+    .styled-table {
+        min-width: unset;
+    }
+}
+
+@media (min-width: 1200px) {
+    .form-card,
+    .filter-card,
+    .table-card {
+        max-width: 60vw;
+    }
 }
