@@ -29,7 +29,7 @@ import { Router } from '@angular/router';
   `]
 })
 export class AccesoDenegadoComponent {
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
   volverAlLogin() {
     this.router.navigate(['/login']);
