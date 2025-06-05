@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithEmailAndPassword } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, getDoc, doc, setDoc } from 'firebase/firestore';
 import { firebaseConfig } from '../../../../firebase/firebase-config';
 import { Conductor, Usuario } from '../models/models';
+
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -13,7 +14,7 @@ const db = getFirestore(app);
   providedIn: 'root'
 })
 export class AuthService {
-  constructor() {}
+  constructor() { }
 
   async login(email: string, password: string): Promise<void> {
     try {
@@ -32,14 +33,14 @@ export class AuthService {
       // Crear usuario en Firebase Authentication con una contraseña temporal
       const userCredential = await createUserWithEmailAndPassword(auth, conductor.correo, 'Temporal123!');
       const userId = userCredential.user.uid;
-  
+
       // Guardar los datos en la colección "USUARIO"
       await setDoc(doc(db, 'USUARIO', userId), {
         id: userId,
         correo: conductor.correo,
         perfil: 'Conductor' // Siempre será "Conductor" en este caso
       });
-  
+
       // Guardar los datos en la colección "CONDUCTOR"
       await setDoc(doc(db, 'CONDUCTOR', userId), {
         nombre: conductor.nombre,
@@ -47,7 +48,7 @@ export class AuthService {
         telefono: conductor.telefono,
         licencia: conductor.licencia
       });
-  
+
       // Enviar correo de restablecimiento de contraseña
       await sendPasswordResetEmail(auth, conductor.correo);
       console.log('Conductor registrado en ambas colecciones y correo de restablecimiento enviado.');
@@ -73,20 +74,34 @@ export class AuthService {
       // Crear usuario en Firebase Authentication con una contraseña temporal
       const userCredential = await createUserWithEmailAndPassword(auth, admin.correo, 'Temporal123!');
       const userId = userCredential.user.uid;
-  
+
       // Guardar los datos en la colección "USUARIO"
       await setDoc(doc(db, 'USUARIO', userId), {
         id: userId,
         correo: admin.correo,
         perfil: admin.perfil // Siempre será "Administrador" en este caso
       });
-  
+
       // Enviar correo de restablecimiento de contraseña
       await sendPasswordResetEmail(auth, admin.correo);
       console.log('Administrador registrado y correo de restablecimiento enviado.');
     } catch (error) {
       console.error('Error al registrar al administrador:', error);
       throw error;
+    }
+  }
+
+  async getUsuarioConPerfil(): Promise<Usuario | null> {
+    const user = auth.currentUser;
+    if (!user) return null;
+
+    const userDocRef = doc(db, 'USUARIO', user.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      return userDoc.data() as Usuario;
+    } else {
+      return null;
     }
   }
 }

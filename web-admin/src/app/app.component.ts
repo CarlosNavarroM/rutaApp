@@ -1,18 +1,31 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterModule, Router } from '@angular/router';
+import { RouterOutlet, RouterModule, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common'; // 👈 Importar CommonModule
+import { filter } from 'rxjs/operators';
 import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterModule],
+  imports: [CommonModule, RouterOutlet, RouterModule], // 👈 Agregar CommonModule aquí
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'web-admin';
+  ocultarLayout = false;
 
-  constructor(private readonly authService: AuthService, private readonly router: Router) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly router: Router
+  ) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        const rutasOcultas = ['/login', '/acceso-denegado'];
+        this.ocultarLayout = rutasOcultas.includes(this.router.url);
+      });
+  }
 
   async logout(): Promise<void> {
     try {

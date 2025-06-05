@@ -1,11 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- Mostrar navbar solo si no estamos en login o acceso-denegado -->
+<nav *ngIf="!ocultarLayout" class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <!--ïcono de la app-->
     <img src="assets/icon.png" routerLink="/add-route" alt="Logo" width="140" height="70" class="d-inline-block align-text-top">
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
@@ -25,9 +26,11 @@
   </div>
 </nav>
 
-<!-- Este debe ir solo, nunca envolver otro HTML -->
+<!-- Contenido principal -->
 <router-outlet></router-outlet>
-<footer class="footer">
+
+<!-- solo si no estamos en login o acceso-denegado -->
+<footer *ngIf="!ocultarLayout" class="footer">
   <div class="container">
     <p class="text-center">Proyecto estudiantil desarrollado por alumnos de Duoc UC - Todos los derechos reservados 2025</p>
   </div>
