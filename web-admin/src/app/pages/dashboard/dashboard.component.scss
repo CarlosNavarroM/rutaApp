@@ -1,0 +1,11 @@
+/* filepath: web-admin/src/app/pages/dashboard/dashboard.component.scss */
+.card { border-radius: var(--border-radius); }
+.table-card { margin-top: var(--spacing-lg); }
+
+.clickable {
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+}
+.clickable:hover {
+  transform: scale(1.02);
+}

@@ -1,0 +1,70 @@
+<div class="container py-4">
+  <h2 class="mb-4">Dashboard de Despachos</h2>
+  <div class="row g-3 mb-5">
+    <div class="col-sm-4">
+      <div class="card text-white bg-primary h-100 clickable" (click)="filtrarVista('total')">
+        <div class="card-body text-center">
+          <h5 class="card-title">Total</h5>
+          <p class="display-6">{{ total }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-white bg-success h-100 clickable" (click)="filtrarVista('semanal')">
+        <div class="card-body text-center">
+          <h5 class="card-title">Última Semana</h5>
+          <p class="display-6">{{ semanal }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-white bg-warning h-100 clickable" (click)="filtrarVista('mensual')">
+        <div class="card-body text-center">
+          <h5 class="card-title">Último Mes</h5>
+          <p class="display-6">{{ mensual }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h4>
+      Lista de Despachos - {{ filtroActual | titlecase }}
+    </h4>
+
+    <table class="styled-table w-100">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Conductor</th>
+          <th>RUT</th>
+          <th>Patente</th>
+          <th>Tipo Carga</th>
+          <th>Local</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of registrosVisibles">
+          <td>{{ r.fecha.toDate() | date:'dd/MM/yyyy' }}</td>
+          <td>{{ r.fecha.toDate() | date:'HH:mm' }}</td>
+          <td>{{ r.conductor }}</td>
+          <td>{{ r.rutConductor }}</td>
+          <td>{{ r.patente }}</td>
+          <td>{{ r.tipoCarga }}</td>
+          <td>{{ r.local }}</td>
+          <td>{{ r.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="registrosVisibles.length === 0" class="no-data">
+      No hay despachos en este rango.
+    </div>
+
+    <div class="text-center mt-3" *ngIf="vista.length > registrosVisibles.length">
+      <button class="btn btn-outline-secondary" (click)="mostrarMas()">Ver más</button>
+    </div>
+  </div>
+</div>
