@@ -60,22 +60,31 @@ export class ResumenPage implements OnInit {
   }
 
   private applyFilter() {
-    const now = new Date();
-    if (this.selectedPeriod === 'semanal') {
-      const weekAgo = new Date(now.getTime() - 7 * 24*60*60_000);
-      this.mostrados = this.todos.filter(d => {
-        const dts = d.fecha.toDate();
-        return dts >= weekAgo && dts <= now;
-      });
-    } else if (this.selectedPeriod === 'mensual') {
-      const monthAgo = new Date(now.getFullYear(), now.getMonth()-1, now.getDate());
-      this.mostrados = this.todos.filter(d => {
-        const dts = d.fecha.toDate();
-        return dts >= monthAgo && dts <= now;
-      });
-    } else {
-      this.mostrados = [...this.todos];
-    }
-    this.count = this.mostrados.length;
+  const now = new Date();
+  let filtrados: RegistroDespacho[] = [];
+
+  if (this.selectedPeriod === 'semanal') {
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60_000);
+    filtrados = this.todos.filter(d => {
+      const dts = d.fecha.toDate();
+      return dts >= weekAgo && dts <= now;
+    });
+  } else if (this.selectedPeriod === 'mensual') {
+    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    filtrados = this.todos.filter(d => {
+      const dts = d.fecha.toDate();
+      return dts >= monthAgo && dts <= now;
+    });
+  } else {
+    filtrados = [...this.todos];
   }
+
+  // Ordenar de más reciente a más antiguo
+  this.mostrados = filtrados.sort(
+    (a, b) => b.fecha.toDate().getTime() - a.fecha.toDate().getTime()
+  );
+
+  this.count = this.mostrados.length;
+}
+
 }

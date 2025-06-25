@@ -74,22 +74,30 @@ export class HomePage implements OnInit {
     }
   }
 
-  public onSegmentChanged(): void {
-    switch (this.selectedSegment) {
-      case 'pendientes':
-        this.displayedDespachos = this.despachos.filter(d => d.estado === 'Pendiente');
-        break;
-      case 'completados':
-        this.displayedDespachos = this.despachos.filter(d => d.estado === 'Entregado');
-        break;
-      case 'rechazados':
-        this.displayedDespachos = this.despachos.filter(d => d.estado === 'Rechazado');
-        break;
-      case 'resumen':
-        this.displayedDespachos = [];
-        break;
-    }
+public onSegmentChanged(): void {
+  let filtrados: RegistroDespacho[] = [];
+
+  switch (this.selectedSegment) {
+    case 'pendientes':
+      filtrados = this.despachos.filter(d => d.estado === 'Pendiente');
+      break;
+    case 'completados':
+      filtrados = this.despachos.filter(d => d.estado === 'Entregado');
+      break;
+    case 'rechazados':
+      filtrados = this.despachos.filter(d => d.estado === 'Rechazado');
+      break;
+    case 'resumen':
+      this.displayedDespachos = [];
+      return;
   }
+
+  // Ordenar de más reciente a más antiguo
+  this.displayedDespachos = filtrados.sort(
+    (a, b) => b.fecha.toDate().getTime() - a.fecha.toDate().getTime()
+  );
+}
+
 
   public cardClass(estado: string): { [key: string]: boolean } {
     return {
