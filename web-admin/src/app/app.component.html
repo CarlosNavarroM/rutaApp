@@ -1,38 +1,43 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- Mostrar navbar solo si no estamos en login o acceso-denegado -->
+<nav *ngIf="!ocultarLayout" class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/add-route">Admin Panel</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <img src="assets/iconletra.png" routerLink="/add-route" alt="Logo" width="140" height="40" class="d-inline-block align-text-top">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/add-route" routerLinkActive="active">Agregar Registro</a>
+          <a class="nav-link" routerLink="/add-route" routerLinkActive="active">Gestionar Registros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/register-driver" routerLinkActive="active">Registrar Conductor</a>
+          <a class="nav-link" routerLink="/register-driver" routerLinkActive="active">Registrar conductor</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/register-admin" routerLinkActive="active">Registrar Admin</a>
+          <a class="nav-link" routerLink="/register-admin" routerLinkActive="active">Registrar administrador</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="https://console.firebase.google.com/?hl=es-419&_gl=1*mus620*_ga*MTUxMzU4NDYwNS4xNzI3MjIyMzYw*_ga_CW55HF8NVT*czE3NTA4MTE2MjIkbzYxJGcxJHQxNzUwODExNjUyJGozMCRsMCRoMA.." target="_blank" rel="noopener">Administrar colecciones</a>
+        </li>
+           <li class="nav-item">
           <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
         </li>
-       <li class="nav-item">
-  <a class="nav-link text-danger" (click)="logout()">Cerrar sesión</a>
-</li>
+        <li class="nav-item">
+          <a class="nav-link text-danger" href="#" (click)="logout()">Cerrar sesión</a>
+        </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Este debe ir solo, nunca envolver otro HTML -->
+<!-- Contenido principal -->
 <router-outlet></router-outlet>
+
+<!-- solo si no estamos en login o acceso-denegado -->
+<footer *ngIf="!ocultarLayout" class="footer">
+  <div class="container">
+    <p class="text-center">Proyecto estudiantil desarrollado por alumnos de Duoc UC - Todos los derechos reservados 2025</p>
+  </div>
+</footer>

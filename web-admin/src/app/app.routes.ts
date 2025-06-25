@@ -4,13 +4,15 @@ import { RegisterDriverComponent } from './pages/register-driver/register-driver
 import { RegisterAdminComponent } from './pages/register-admin/register-admin.component';
 import { AddRouteComponent } from './pages/add-route/add-route.component';
 import {DashboardComponent} from './pages/dashboard/dashboard.component'
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'register-driver', component: RegisterDriverComponent },
-  {path: 'register-admin',component:RegisterAdminComponent},
-  {path: 'add-route', component: AddRouteComponent},
-  {path: 'dashboard',component: DashboardComponent},
+  { path: 'acceso-denegado', loadComponent: () => import('./pages/acceso-denegado/acceso-denegado.component').then(m => m.AccesoDenegadoComponent) },
+  { path: 'register-driver', component: RegisterDriverComponent, canActivate: [authGuard] },
+  { path: 'register-admin', component: RegisterAdminComponent, canActivate: [authGuard] },
+  {path: 'dashboard',component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'add-route', component: AddRouteComponent, canActivate: [authGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

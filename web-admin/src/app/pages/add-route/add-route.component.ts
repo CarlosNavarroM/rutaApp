@@ -1,257 +1,336 @@
-// Importaciones necesarias de Angular, módulos comunes y servicios
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ApplicationRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApplicationRef } from '@angular/core';
-import { first } from 'rxjs/operators';
 import { FirebaseDatabaseService } from '../../services/firebase-database.service';
 import { orderBy, where, QueryConstraint } from 'firebase/firestore';
-import { Observable, BehaviorSubject, switchMap, forkJoin, map, Subject, takeUntil, from } from 'rxjs';
-import { Usuario, Conductor, Transporte, TipoCarga, Turno, Vuelta, Local, Gestion, Estado } from '../../models/models';
+import { Observable, forkJoin, map, Subject, takeUntil, from, take, of, EMPTY, catchError } from 'rxjs';
+import { Conductor, Transporte, TipoCarga, Turno, Vuelta, Local, Gestion, Estado } from '../../models/models';
+
+// Interfaz para los registros de despacho
+interface RegistroDespacho {
+    id: string;
+    conductor: string;
+    transporte: string;
+    tipo_carga: string;
+    turno: string;
+    vuelta: string;
+    local: string;
+    gestion: string;
+    estado: string;
+    fecha: Date | string;
+}
+
+// Interfaz para el formulario de nuevo registro
+interface NuevoRegistroForm {
+    conductor: string;
+    transporte: string;
+    tipo_carga: string;
+    turno: string;
+    vuelta: string;
+    local: string;
+    gestion: string;
+    estado: string;
+    fecha: string;
+}
 
 @Component({
-  selector: 'app-add-route',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './add-route.component.html',
-  styleUrls: ['./add-route.component.scss']
+    selector: 'app-add-route',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
+    templateUrl: './add-route.component.html',
+    styleUrls: ['./add-route.component.scss']
 })
 export class AddRouteComponent implements OnInit, OnDestroy {
 
-
-trackByNombre(index: number, item: { nombre: string }): string {
-    return item.nombre;
-  }
-  
-  trackById(index: number, item: { id: string }): string {
-    return item.id;
-  }
-  
-
-  // Control de destrucción de suscripciones
-  private destroy$ = new Subject<void>();
-
-  // Disparador para recargar datos
-  private refreshData$ = new BehaviorSubject<void>(undefined);
-
-  // Criterios de filtro para búsqueda de registros
-  filterCriteria = {
-    conductor: '',
-    fecha: '',
-    turno: ''
-  };
-
-  // Observable que obtiene los registros filtrados desde Firestore
-  registros$: Observable<any[]> = this.refreshData$.pipe(
-    switchMap(() => {
-      const queryConstraints: QueryConstraint[] = [];
-      queryConstraints.push(orderBy('fecha', 'desc'));
-
-      // Aplicar filtros si están definidos
-      if (this.filterCriteria.conductor) {
-        queryConstraints.push(where('conductor', '==', this.filterCriteria.conductor));
-      }
-      if (this.filterCriteria.turno) {
-        queryConstraints.push(where('turno', '==', this.filterCriteria.turno));
-      }
-      if (this.filterCriteria.fecha) {
-        const selectedDate = new Date(this.filterCriteria.fecha);
-        const startOfDayUtc = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0, 0));
-        const endOfDayUtc = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 23, 59, 59, 999));
-        queryConstraints.push(where('fecha', '>=', startOfDayUtc));
-        queryConstraints.push(where('fecha', '<=', endOfDayUtc));
-      }
-
-      // Consultar Firestore con los filtros aplicados
-      return from(this.dbService.readCollection('REGISTRO_DESPACHO', ...queryConstraints)).pipe(
-        map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-      );
-    }),
-    // Convertir fechas a objetos Date
-    map((registros: any[]) => {
-      return registros.map((registro: any) => {
-        registro.fecha = registro.fecha?.toDate ? registro.fecha.toDate() : (registro.fecha instanceof Date ? registro.fecha : new Date(registro.fecha));
-        return registro;
-      });
-    }),
-    takeUntil(this.destroy$)
-  );
-
-  // Indicador de carga
-  cargando: boolean = true;
-
-  // Observables para cargar opciones del formulario
-  conductores$!: Observable<any[]>;
-  transportes$!: Observable<any[]>;
-  tiposCarga$!: Observable<any[]>;
-  turnos$!: Observable<any[]>;
-  vueltas$!: Observable<any[]>;
-  locales$!: Observable<any[]>;
-  gestiones$!: Observable<any[]>;
-  estados$!: Observable<any[]>;
-
-  // Modelo del nuevo registro a agregar
-  nuevoRegistro: any = {
-    conductor: '',
-    transporte: '',
-    tipo_carga: '',
-    turno: '',
-    vuelta: '',
-    local: '',
-    gestion: '',
-    estado: 'Pendiente',
-    fecha: ''
-  };
-
-  constructor(private dbService: FirebaseDatabaseService, private appRef: ApplicationRef) {}
-
-  ngOnInit(): void {
-  // Ejecuta la lógica solo cuando la app esté estable (útil para SSR)
-  this.appRef.isStable.pipe(first(stable => stable)).subscribe(() => {
-    // Inicia solo después de estabilización
-    this.conductores$ = from(this.dbService.readCollection('CONDUCTOR')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-    this.transportes$ = from(this.dbService.readCollection('TRANSPORTE')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-    this.tiposCarga$ = from(this.dbService.readCollection('TIPO_CARGA')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-    this.turnos$ = from(this.dbService.readCollection('TURNO')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-    this.vueltas$ = from(this.dbService.readCollection('VUELTA')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-    this.locales$ = from(this.dbService.readCollection('LOCAL')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-    this.gestiones$ = from(this.dbService.readCollection('GESTION')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-    this.estados$ = from(this.dbService.readCollection('ESTADO')).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
-
-    this.subscribeToFormOptions();
-    this.subscribeToRegistros();
-  });
-}
-  ngOnDestroy() {
-    // Cancelar suscripciones al destruir el componente
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  // Agrega un nuevo registro a Firestore
-  agregarRegistro() {
-    const nuevo = {
-      ...this.nuevoRegistro,
-      fecha: new Date(this.nuevoRegistro.fecha)
-    };
-
-    from(this.dbService.createDocument('REGISTRO_DESPACHO', nuevo)).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.resetNuevoRegistro();
-          this.refreshData$.next();
-        },
-        error: (error) => {
-          console.error('Error al agregar el registro:', error);
-        }
-      });
-  }
-
-  // Confirmación antes de eliminar un registro
-  confirmarEliminar(id: string) {
-    const confirmado = confirm('¿Estás seguro que quieres eliminar este registro?');
-    if (confirmado) {
-      this.eliminarRegistro(id);
+    // TrackBy para optimizar ngFor en listas
+    trackByNombre(index: number, item: { nombre: string }): string {
+        return item.nombre;
     }
-  }
 
-  // Elimina un registro de Firestore
-  eliminarRegistro(id: string) {
-    from(this.dbService.deleteDocument('REGISTRO_DESPACHO', id)).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.refreshData$.next();
-        },
-        error: (error) => {
-          console.error('Error al eliminar el registro:', error);
-        }
-      });
-  }
+    trackById(index: number, item: RegistroDespacho): string {
+        return item.id;
+    }
 
-  // Carga inicial de opciones del formulario
-  private subscribeToFormOptions() {
-    forkJoin([
-      this.conductores$,
-      this.transportes$,
-      this.tiposCarga$,
-      this.turnos$,
-      this.vueltas$,
-      this.locales$,
-      this.gestiones$,
-      this.estados$
-    ]).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.refreshData$.next();
-        },
-        error: (error) => {
-          console.error('Error al obtener los datos de opciones:', error);
-          this.cargando = false;
-        }
-      });
-  }
+    trackByPatente(index: number, item: { patente: string }): string {
+        return item.patente;
+    }
 
-  // Suscripción a los registros para mostrar en la vista
-  private subscribeToRegistros() {
-    this.registros$
-      .subscribe({
-        next: () => {
-          this.cargando = false;
-        },
-        error: (error) => {
-          console.error('Error al obtener los registros:', error);
-          this.cargando = false;
-        }
-      });
-  }
+    trackByLocal(index: number, item: { local: string }): string {
+        return item.local;
+    }
 
-  // Reinicia el formulario de nuevo registro
-  private resetNuevoRegistro() {
-    this.nuevoRegistro = {
-      conductor: '',
-      transporte: '',
-      tipo_carga: '',
-      turno: '',
-      vuelta: '',
-      local: '',
-      gestion: '',
-      estado: 'Pendiente',
-      fecha: ''
+    private readonly destroy$ = new Subject<void>(); // Para cancelar suscripciones
+
+    // Criterios de filtro para la búsqueda de registros
+    filterCriteria = {
+        conductor: '',
+        fecha: '',
+        turno: ''
     };
-  }
 
-  // Aplica los filtros definidos
-  applyFilters() {
-    this.cargando = true;
-    this.refreshData$.next();
-  }
+    registros$: Observable<RegistroDespacho[]> = of([]); // Observable de registros
+    cargando: boolean = true; // Estado de carga
 
-  // Reinicia los filtros y recarga los datos
-  resetFilters() {
-    this.filterCriteria = {
-      conductor: '',
-      fecha: '',
-      turno: ''
+    // Observables para las opciones de los formularios
+    conductores$!: Observable<Conductor[]>;
+    transportes$!: Observable<Transporte[]>;
+    tiposCarga$!: Observable<TipoCarga[]>;
+    turnos$!: Observable<Turno[]>;
+    vueltas$!: Observable<Vuelta[]>;
+    locales$!: Observable<Local[]>;
+    gestiones$!: Observable<Gestion[]>;
+    estados$!: Observable<Estado[]>;
+
+    // Modelo para el formulario de nuevo registro
+    nuevoRegistro: NuevoRegistroForm = {
+        conductor: '',
+        transporte: '',
+        tipo_carga: '',
+        turno: '',
+        vuelta: '',
+        local: '',
+        gestion: '',
+        estado: 'Pendiente',
+        fecha: ''
     };
-    this.cargando = true;
-    this.refreshData$.next();
-  }
-  
+
+    constructor(private readonly dbService: FirebaseDatabaseService, private readonly appRef: ApplicationRef) {
+        console.log('AddRouteComponent: Constructor inicializado.');
+    }
+
+    ngOnInit(): void {
+        // Carga inicial de datos para los selects y registros
+        console.log('AddRouteComponent: ngOnInit ejecutado. Iniciando carga de opciones de formulario y registros.');
+        this.cargando = true;
+        forkJoin([
+            from(this.dbService.readCollection('CONDUCTOR')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as Conductor))), take(1)),
+            from(this.dbService.readCollection('TRANSPORTE')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as Transporte))), take(1)),
+            from(this.dbService.readCollection('TIPO_CARGA')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as TipoCarga))), take(1)),
+            from(this.dbService.readCollection('TURNO')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as Turno))), take(1)),
+            from(this.dbService.readCollection('VUELTA')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as Vuelta))), take(1)),
+            from(this.dbService.readCollection('LOCAL')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as Local))), take(1)),
+            from(this.dbService.readCollection('GESTION')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as Gestion))), take(1)),
+            from(this.dbService.readCollection('ESTADO')).pipe(map(qs => qs.docs.map(doc => ({ id: doc.id, ...doc.data() } as Estado))), take(1)),
+            this.getAndMapRegistros().pipe(take(1))
+        ]).pipe(
+            takeUntil(this.destroy$),
+            catchError(error => {
+                // Manejo de error en la carga inicial
+                console.error('Página: Error crítico al cargar datos iniciales (opciones de formulario o registros):', error);
+                this.cargando = false;
+                return EMPTY;
+            })
+        )
+            .subscribe({
+                next: ([conductores, transportes, tiposCarga, turnos, vueltas, locales, gestiones, estados, registros]) => {
+                    // Asignación de datos a los observables
+                    this.conductores$ = of(conductores);
+                    this.transportes$ = of(transportes);
+                    this.tiposCarga$ = of(tiposCarga);
+                    this.turnos$ = of(turnos);
+                    this.vueltas$ = of(vueltas);
+                    this.locales$ = of(locales);
+                    this.gestiones$ = of(gestiones);
+                    this.estados$ = of(estados);
+                    this.registros$ = of(registros);
+                    console.log('Página: Todos los datos iniciales (opciones y registros) cargados exitosamente.');
+                    this.cargando = false;
+                },
+                error: (error) => {
+                    // Fallback de error
+                    console.error('Página: Fallback de error en suscripción de datos iniciales:', error);
+                    this.cargando = false;
+                }
+            });
+    }
+
+    ngOnDestroy() {
+        // Cancelar todas las suscripciones al destruir el componente
+        this.destroy$.next();
+        this.destroy$.complete();
+        console.log('AddRouteComponent: Componente destruido. Suscripciones RxJS canceladas.');
+    }
+
+    // Construye los filtros para la consulta a Firestore
+    private buildQueryConstraints(): QueryConstraint[] {
+        const queryConstraints: QueryConstraint[] = [];
+        queryConstraints.push(orderBy('fecha', 'desc'));
+        if (this.filterCriteria.conductor) {
+            console.log(`Filtro: Añadiendo filtro por conductor: ${this.filterCriteria.conductor}`);
+            queryConstraints.push(where('conductor', '==', this.filterCriteria.conductor));
+        }
+        if (this.filterCriteria.turno) {
+            console.log(`Filtro: Añadiendo filtro por turno: ${this.filterCriteria.turno}`);
+            queryConstraints.push(where('turno', '==', this.filterCriteria.turno));
+        }
+        if (this.filterCriteria.fecha) {
+            const selectedDate = new Date(this.filterCriteria.fecha);
+            if (isNaN(selectedDate.getTime())) {
+                console.warn('Filtro: Fecha de filtro ingresada es inválida. Saltando filtro de fecha.');
+            } else {
+                console.log(`Filtro: Añadiendo filtro por fecha: ${this.filterCriteria.fecha}`);
+                const startOfDay = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0, 0));
+                const endOfDay = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 23, 59, 59, 999));
+                console.log(`Filtro: Rango de fecha UTC para la consulta - Inicio: ${startOfDay.toISOString()}, Fin: ${endOfDay.toISOString()}`);
+                queryConstraints.push(where('fecha', '>=', startOfDay));
+                queryConstraints.push(where('fecha', '<=', endOfDay));
+            }
+        }
+        return queryConstraints;
+    }
+
+    // Obtiene y mapea los registros de la base de datos
+    private getAndMapRegistros(): Observable<RegistroDespacho[]> {
+        console.log('Registros: Invocando getAndMapRegistros para obtener datos.');
+        const queryConstraints = this.buildQueryConstraints();
+        return from(this.dbService.readCollection('REGISTRO_DESPACHO', ...queryConstraints)).pipe(
+            map(querySnapshot => {
+                if (!querySnapshot?.docs) {
+                    console.warn('Registros: QuerySnapshot o docs es nulo/indefinido durante getAndMapRegistros. Retornando array vacío.');
+                    return [];
+                }
+                // Mapeo de los datos obtenidos
+                const mappedData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as RegistroDespacho));
+                console.log('Registros: Datos obtenidos y mapeados en getAndMapRegistros:', mappedData);
+                return mappedData;
+            }),
+            map((registros: RegistroDespacho[]) => {
+                // Conversión de fechas a objetos Date
+                console.log('Registros: Iniciando conversión de fechas en getAndMapRegistros. Datos antes de conversión:', registros);
+                return registros.map((registro: RegistroDespacho) => {
+                    if ((registro.fecha as any)?.toDate) {
+                        registro.fecha = (registro.fecha as any).toDate();
+                    }
+                    else if (typeof registro.fecha === 'string' && !isNaN(new Date(registro.fecha).getTime())) {
+                        registro.fecha = new Date(registro.fecha);
+                    }
+                    else if (!(registro.fecha instanceof Date)) {
+                        console.warn(`Registros: Fecha inválida para registro ID ${registro.id} en getAndMapRegistros. Estableciendo fecha por defecto. Valor original:`, registro.fecha);
+                        registro.fecha = new Date(0);
+                    }
+                    return registro;
+                });
+            }),
+            catchError(error => {
+                // Manejo de error en la consulta
+                console.error('Registros: Error en getAndMapRegistros durante la lectura/mapeo:', error);
+                return of([]);
+            })
+        );
+    }
+
+    // Agrega un nuevo registro a la base de datos
+    async agregarRegistro() {
+        let fechaParaGuardar: Date;
+        if (this.nuevoRegistro.fecha && this.nuevoRegistro.fecha.trim() !== '') {
+            fechaParaGuardar = new Date(this.nuevoRegistro.fecha);
+        } else {
+            console.warn('Operación: No se proporcionó fecha, usando fecha y hora actual.');
+            fechaParaGuardar = new Date();
+        }
+        if (isNaN(fechaParaGuardar.getTime())) {
+            console.error('Operación: La fecha y hora proporcionadas resultaron en una fecha inválida:', this.nuevoRegistro.fecha);
+            this.cargando = false;
+            alert('La fecha y hora ingresada no es válida. Por favor, corrígela.');
+            return;
+        }
+        const nuevo = {
+            ...this.nuevoRegistro,
+            fecha: fechaParaGuardar
+        };
+        console.log('Operación: Preparando nuevo registro para agregar (con fecha ajustada):', nuevo);
+        this.cargando = true;
+        try {
+            await this.dbService.createDocument('REGISTRO_DESPACHO', nuevo);
+            console.log('Operación: Nuevo registro agregado exitosamente.');
+            this.resetNuevoRegistro();
+            console.log('Operación: Formulario de nuevo registro reseteado.');
+            this.reloadRecords();
+        } catch (error) {
+            console.error('Operación: Error al agregar el registro:', error);
+        } finally {
+            this.cargando = false;
+        }
+    }
+
+    // Confirma antes de eliminar un registro
+    confirmarEliminar(id: string) {
+        console.log(`Operación: Solicitud de confirmación para eliminar registro ID: ${id}`);
+        const confirmado = window.confirm('¿Estás seguro que quieres eliminar este registro? Esta acción no se puede deshacer.');
+        if (confirmado) {
+            console.log(`Operación: Confirmación de eliminación aceptada para ID: ${id}`);
+            this.eliminarRegistro(id);
+        } else {
+            console.log(`Operación: Eliminación cancelada por el usuario para ID: ${id}`);
+        }
+    }
+
+    // Elimina un registro de la base de datos
+    async eliminarRegistro(id: string) {
+        console.log(`Operación: Iniciando eliminación de registro con ID: ${id}`);
+        this.cargando = true;
+        try {
+            await this.dbService.deleteDocument('REGISTRO_DESPACHO', id);
+            console.log(`Operación: Registro ${id} eliminado exitosamente.`);
+            this.reloadRecords();
+        } catch (error) {
+            console.error('Operación: Error al eliminar el registro:', error);
+        } finally {
+            this.cargando = false;
+        }
+    }
+
+    // Recarga los registros desde la base de datos
+    private reloadRecords(): void {
+        console.log('Recarga: Iniciando recarga manual de registros.');
+        this.cargando = true;
+        this.getAndMapRegistros().pipe(
+            take(1),
+            takeUntil(this.destroy$)
+        ).subscribe({
+            next: (records) => {
+                this.registros$ = of(records);
+                console.log('Recarga: Registros recargados exitosamente.');
+                this.cargando = false;
+            },
+            error: (err) => {
+                console.error('Recarga: Error durante la recarga manual de registros:', err);
+                this.registros$ = of([]);
+                this.cargando = false;
+            }
+        });
+    }
+
+    // Resetea el formulario de nuevo registro
+    private resetNuevoRegistro() {
+        this.nuevoRegistro = {
+            conductor: '',
+            transporte: '',
+            tipo_carga: '',
+            turno: '',
+            vuelta: '',
+            local: '',
+            gestion: '',
+            estado: 'Pendiente',
+            fecha: ''
+        };
+    }
+
+    // Aplica los filtros seleccionados
+    applyFilters() {
+        console.log('Filtro: Aplicando filtros. Criterios actuales:', this.filterCriteria);
+        this.reloadRecords();
+    }
+
+    // Resetea los filtros a su estado inicial
+    resetFilters() {
+        console.log('Filtro: Reiniciando filtros.');
+        this.filterCriteria = {
+            conductor: '',
+            fecha: '',
+            turno: ''
+        };
+        this.reloadRecords();
+        console.log('Filtro: Disparando recarga de datos sin filtros.');
+    }
 }
-// Fin del componente
