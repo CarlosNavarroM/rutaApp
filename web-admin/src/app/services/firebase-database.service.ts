@@ -5,7 +5,8 @@ import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, dele
 import { firebaseConfig } from '../../../../firebase/firebase-config';
 import { Observable, of, from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Conductor, Transporte, TipoCarga, Turno, Vuelta, Local, Gestion, Estado } from '../models/models';
+import { Conductor, Transporte, TipoCarga, Turno, Vuelta, Local, Gestion, Estado, Despacho } from '../models/models'; // Ensure this path is correct
+
 
 // Inicializa la aplicación de Firebase con la configuración proporcionada
 const app = initializeApp(firebaseConfig);
@@ -263,4 +264,13 @@ export class FirebaseDatabaseService {
    })
     );
   }
+
+getDespachos(): Observable<Despacho[]> {
+  const colRef = collection(db, 'REGISTRO_DESPACHO');
+  return from(getDocs(colRef)).pipe(
+    map((snapshot: QuerySnapshot<DocumentData>) =>
+      snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Despacho))
+    )
+  );
+}
 }
