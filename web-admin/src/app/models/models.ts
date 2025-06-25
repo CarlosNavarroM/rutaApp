@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 // Interfaz para Usuario
 export interface Usuario {
   id?: string; // ID generado por Firestore 
@@ -91,3 +93,32 @@ export interface Vuelta {
   id?: string; // ID correlativo en Firebase Database
   nombre: string; // Nombre de la vuelta (ejemplo: "Primera", "Segunda")  
 }
+
+// Interfaz para Despacho
+export interface Despacho {
+  id?: string;
+  conductor: string;
+  estado: string;
+  fecha: Timestamp;
+  fechaEntrega?: Timestamp;
+  fechaRechazo?: Timestamp;
+  gestion: string;
+  local: string;
+  motivoRechazo?: string;
+  tipo_carga: string;
+  transporte: string;
+  turno: string;
+  vuelta: string;
+}
+
+export interface DespachoDetalle {
+  id: string;
+  fecha: Timestamp;
+  estado: string;
+  conductor: string;
+  rutConductor: string;
+  patente: string;
+  tipoCarga: string;
+  local: string;
+}
+
